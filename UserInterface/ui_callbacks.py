@@ -13,13 +13,8 @@ class ui_callbacks:
         
     def dig_in_uc(self, i):
         sp = self._uc.dig_ip_spn[i]
-        # brd_num = int(self._uc.board_dict[sp])
-        # rel_num = int(self._uc.channel_dict[sp])
-        # current_data = int(self._uc.UI_dict[sp])
-        # new_data = 1 - current_data
-        # self._uc.dig_state[sp] = 1 - self._uc.dig_state[sp]
-        # state = self._uc.dig_state[sp]
-        # self.pass_to_board(spn_number=sp, data=new_data)
+        brd_num = int(self._uc.board_dict[sp])
+        slot_num = int(self._uc.channel_dict[sp])
         print("DigIN "+str(sp))
 
     def dig_out_uc(self, i):
@@ -61,8 +56,6 @@ class ui_callbacks:
         # new_data = 1 - current_data
         # self._uc.pwm_state[sp] = 1 - self._uc.pwm_state[sp]
         # state = self._uc.pwm_state[sp]
-        # self.pass_to_board(spn_number=sp, data=new_data)
-        # self.can2.flip_one(brd_num, rel_num, state)
         print("PWMIN "+str(sp))
         
     def freq_out_uc(self, i):
