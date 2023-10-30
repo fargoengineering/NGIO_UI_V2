@@ -36,24 +36,24 @@ class etherCAT:
         c = 5
         board_num = 1
         for spn in self.gd.type_dict:
-            print(spn)
+            # print(spn)
             if self.gd.type_dict[spn] == 'digin':
-                print("digitalin")
+                # print("digitalin")
                 self.update_pdo(c,spn,board_num,1,1,1,1,2)
             elif self.gd.type_dict[spn] == 'digout':
-                print("digitalout")
+                # print("digitalout")
                 self.update_pdo(c,spn,board_num,1,1,1,1,1)
             elif self.gd.type_dict[spn] == 'voltin':
-                print("voltin")
+                # print("voltin")
                 self.update_pdo(c,spn,board_num,1,1,1,1,3)
             elif self.gd.type_dict[spn] == 'voltout':
-                print("voltout")
+                # print("voltout")
                 self.update_pdo(c,spn,board_num,1,1,1,1,4)
-            elif self.gd.type_dict[spn] == 'pwmout':
-                print("pwmout")
+            elif self.gd.type_dict[spn] == 'pwmin':
+                # print("pwmout")
                 self.update_pdo(c,spn,board_num,1,1,1,1,5)
             elif self.gd.type_dict[spn] == 'freqout':
-                print("freqout")
+                # print("freqout")
                 self.update_pdo(c,spn,board_num,1,1,1,1,6)
             time.sleep(0.5)
                 
@@ -127,17 +127,16 @@ class etherCAT:
         # WRITE OUTPUT PDO
         # 20 byte code:
         packed_output = struct.pack('BBBBBBBB',int(command),int(slot_number),int(board_number),int(data1),int(data2),int(data3),int(data4),int(data5))    # old pdo version
-        self.master.slaves[0].output = packed_output
+        self.master.slaves[board_number-1].output = packed_output
         ###############
         # 192 byte code: 
         # packed_output = self.set_output(command,slot_number,data1,data2,data3,data4,data5)
         # self.master.slaves[0].output = packed_output
         ################
         self.master.send_processdata()        
-        # self.slot_type = data5  # save slot_type for quick reference        
         time.sleep(0.05) 
         
-    def read_pdo(self):
+    def read_pdo_voltage(self):
         # Read Input PDO
         self.master.send_processdata()
         self.master.receive_processdata(2000)
@@ -145,6 +144,54 @@ class etherCAT:
             voltage__bytes = self.master.slaves[0].input
             # print(voltage__bytes)
             # print(f"input as bytes: {voltage__bytes}")                                        
+            unpacked_data = struct.unpack('llHHH', voltage__bytes)
+            # Now, unpacked_data contains the values as a tuple.
+            data3 = unpacked_data[2]
+
+            
+            a2d_count = self.adc_to_voltage(data3)
+            return(a2d_count)
+        except IndexError as e:
+            print(e)
+            print("EtherCAT Device Not Online!")
+            
+    def read_pdo_pwm(self):
+         # Read Input PDO, return only data 3 (digital in or pwm in value)
+        self.master.send_processdata()
+        self.master.receive_processdata(2000)
+        try:
+            voltage__bytes = self.master.slaves[0].input                       
+            unpacked_data = struct.unpack('llHHH', voltage__bytes)
+            # Now, unpacked_data contains the values as a tuple.
+            data1 = unpacked_data[0]
+            data2 = unpacked_data[1]
+            data3 = unpacked_data[2]
+            data4 = unpacked_data[3]
+            data5 = unpacked_data[4]
+            # data6 = unpacked_data[5]
+            # data7 = unpacked_data[6]
+            duty = data3
+            freq = data4            
+            
+            # Round any frequency spikes to the anticipated values
+            if 935 < freq < 1050:
+                freq = 1000
+            elif 450 < freq <550:
+                freq = 500
+            elif 50 < freq < 150:
+                freq = 100
+                
+            return duty,freq
+        except IndexError as e:
+            print(e)
+            print("EtherCAT Device Not Online!")
+        
+    def read_pdo_dig(self):
+        # Read Input PDO, return only data 3 (digital in or pwm in value)
+        self.master.send_processdata()
+        self.master.receive_processdata(2000)
+        try:
+            voltage__bytes = self.master.slaves[0].input                       
             unpacked_data = struct.unpack('llHHH', voltage__bytes)
             # Now, unpacked_data contains the values as a tuple.
             data1 = unpacked_data[0]
@@ -155,13 +202,7 @@ class etherCAT:
             # data6 = unpacked_data[5]
             # data7 = unpacked_data[6]
             
-            a2d_count = self.adc_to_voltage(data3)
-            if int(self.slot_type) == 3 or int(self.slot_type) == 4:
-                # convert data3 to voltage
-                return(f"bad checks: {data1}\n good checks: {data2}\n data1: {a2d_count} V\n data2: {data4}\n data3: {data5}\n ")
-            else:
-                # don't
-                return((f"bad checks: {data1}\n good checks: {data2}\n data1: {data3}\n data2: {data4}\n data3: {data5}\n"))
+            return(data3)
         except IndexError as e:
             print(e)
             print("EtherCAT Device Not Online!")
@@ -244,6 +285,11 @@ class etherCAT:
 
         return unpacked_value
 
+    def set_slot(self):
+        slot_num = int(self.gd.slot_num_box.get())
+        board_num = int(self.gd.board_box.get())
+        type = int(self.gd.aux_box.get())
+        self.update_pdo(5,slot_num,board_num,1,1,1,1,type)
 
 
 # # Example usage:

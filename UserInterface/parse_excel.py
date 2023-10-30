@@ -1,4 +1,3 @@
-from global_defines import *
 import pandas as pd
 import os
 
@@ -31,70 +30,65 @@ class parse_excel:
 
         Tkinter will generate necessary components, based on the excel configuration.
         """
-        for i in range(8):
-            spn = i
-            self._pe.spn_list.append(spn)
-            spn_data = self.df.loc[i, "type"]
-            spn_type = str(spn_data)
+        for i in range(33):
+            try:
+                # use i when indexing excel columns, use spn when updating dictionaries
+                spn = self.df.loc[i,"SPN"]
+                self._pe.spn_list.append(spn)
+                spn_data = self.df.loc[i, "type"]
+                spn_type = str(spn_data)
 
-            # Check if 3 columns are configured:
-            if (
-                ("Board_Num" in self.df.columns)
-                and ("Channel" in self.df.columns)
-                and ("open_to" in self.df.columns)
-            ):
-                self._pe.fei_compatible = 1
-            else:
-                self._pe.fei_compatible = 0
-
-            # Only if type column has valid entries
-            if (
-                (self._pe.dig_ip_str in spn_type)
-                or (self._pe.dig_op_str in spn_type)
-                or (self._pe.vol_ip_str in spn_type)
-                or (self._pe.vol_op_str in spn_type)
-                or (self._pe.pwm_ip_str in spn_type)
-                or (self._pe.fq_op_str in spn_type)
-            ):
-                # required data
-                name = self.df.loc[spn, "Name"]
-                self._pe.name_list.append(name)
-                self._pe.UI_spn.append(spn)
-                self._pe.UI_dict.update({spn: 0})
-                name_spn = "SPN" + str(spn)
-                self._pe.config_dict.update({spn: name})  # all data in dictionary
-              
-                new_name = name_spn + " : " + name
-                if self._pe.dig_ip_str in spn_type:
-                    self._pe.dig_ip_spn.append(spn)
-                    self._pe.dig_ip_name.append(new_name)
-                    self._pe.type_dict.update({spn: "digin"})
-
-                elif self._pe.dig_op_str in spn_type:
-                    self._pe.dig_op_spn.append(spn)
-                    self._pe.dig_op_name.append(new_name)
-                    self._pe.type_dict.update({spn: "digout"})
-
-                elif self._pe.vol_ip_str in spn_type:
-                    self._pe.vol_ip_spn.append(spn)
-                    self._pe.vol_ip_name.append(new_name)
-                    self._pe.type_dict.update({spn: "voltin"})
+                # Check if 3 columns are configured:
+                board_num = self.df.loc[i,"Board_Num"]
+                channel = self.df.loc[i,"Channel"]
+                self._pe.board_dict.update({spn:board_num})
+                self._pe.channel_dict.update({spn:channel})                
+                # Only if type column has valid entries
+                if (
+                    (self._pe.dig_ip_str in spn_type)
+                    or (self._pe.dig_op_str in spn_type)
+                    or (self._pe.vol_ip_str in spn_type)
+                    or (self._pe.vol_op_str in spn_type)
+                    or (self._pe.pwm_ip_str in spn_type)
+                    or (self._pe.fq_op_str in spn_type)
+                ):
+                    # required data
+                    name = self.df.loc[i, "Name"]
+                    self._pe.name_list.append(name)
+                    self._pe.UI_spn.append(spn)
+                    self._pe.UI_dict.update({spn: 0})
+                    name_spn = "SPN" + str(spn)
+                    self._pe.config_dict.update({spn: name})  # all data in dictionary
                 
-                elif self._pe.vol_op_str in spn_type:
-                    self._pe.vol_op_spn.append(spn)
-                    self._pe.vol_op_name.append(new_name)
-                    self._pe.type_dict.update({spn: "voltout"})
+                    new_name = name_spn + " : " + name
+                    if self._pe.dig_ip_str in spn_type:
+                        self._pe.dig_ip_spn.append(spn)
+                        self._pe.dig_ip_name.append(new_name)
+                        self._pe.type_dict.update({spn: "digin"})
 
-                elif self._pe.pwm_ip_str in spn_type:
-                    self._pe.pwm_ip_spn.append(spn)
-                    self._pe.pwm_ip_name.append(new_name)
-                    self._pe.type_dict.update({spn: "pwmout"})
+                    elif self._pe.dig_op_str in spn_type:
+                        self._pe.dig_op_spn.append(spn)
+                        self._pe.dig_op_name.append(new_name)
+                        self._pe.type_dict.update({spn: "digout"})
 
-                elif self._pe.fq_op_str in spn_type:
-                    self._pe.fq_op_spn.append(spn)
-                    self._pe.fq_op_name.append(new_name)
-                    self._pe.type_dict.update({spn: "freqout"})
+                    elif self._pe.vol_ip_str in spn_type:
+                        self._pe.vol_ip_spn.append(spn)
+                        self._pe.vol_ip_name.append(new_name)
+                        self._pe.type_dict.update({spn: "voltin"})
+                    
+                    elif self._pe.vol_op_str in spn_type:
+                        self._pe.vol_op_spn.append(spn)
+                        self._pe.vol_op_name.append(new_name)
+                        self._pe.type_dict.update({spn: "voltout"})
 
+                    elif self._pe.pwm_ip_str in spn_type:
+                        self._pe.pwm_ip_spn.append(spn)
+                        self._pe.pwm_ip_name.append(new_name)
+                        self._pe.type_dict.update({spn: "pwmin"})
 
-
-
+                    elif self._pe.fq_op_str in spn_type:
+                        self._pe.fq_op_spn.append(spn)
+                        self._pe.fq_op_name.append(new_name)
+                        self._pe.type_dict.update({spn: "freqout"})
+            except KeyError as e:
+                print(e)

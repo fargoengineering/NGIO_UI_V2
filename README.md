@@ -22,7 +22,7 @@
 ## Usage
 
 #### Select your EtherCAT Network Adapter
-* Look at line 17-18 in fei_ethercat.py and make sure the adapter_name matches the adapter you are using.
+* Look at line 17-18 in ethercat.py and make sure the adapter_name matches the adapter you are using.
 * To determine your adapter name, run the file find_adapters.py, which will print out all your network adapters ID's
 * If you are on a Raspberry Pi or linux, the adapter should be as simple as 'eth0'
 * It is a little more complicated on windows, the adapter format should be similar to : '\Device\NPF_{DEADBEEF-DEAD-BEEF-DEAD-BEEEEEEEEF}'

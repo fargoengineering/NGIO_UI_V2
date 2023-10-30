@@ -13,6 +13,8 @@ class global_defines:
 
     # Create the master object
     master = tk.Tk()
+    icon = tk.PhotoImage(file="img/fei_icon.png")
+    master.iconphoto(True,icon)
     master.geometry("750x600")
     master.title("FEI_NGIO")
     mygreen = "#CEF743"
@@ -48,14 +50,7 @@ class global_defines:
     dig_ip_canvas = Canvas(
         tc_dig_ip, width=6, height=6, scrollregion=(0, 0, 1450, 1100)
     )
-    # hbar = Scrollbar(tc_dig_ip, orient=HORIZONTAL)
-    # hbar.pack(side=BOTTOM, fill=X)
-    # hbar.config(command=dig_ip_canvas.xview)
-    # vbar = Scrollbar(tc_dig_ip, orient=VERTICAL)
-    # vbar.pack(side=RIGHT, fill=Y)
-    # vbar.config(command=dig_ip_canvas.yview)
     dig_ip_canvas.config(width=6, height=6)
-    # dig_ip_canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
     dig_ip_canvas.pack(side=LEFT, expand=True, fill=BOTH)
     dig_ip_frame = Frame(dig_ip_canvas)
     dig_ip_canvas.create_window((0, 0), window=dig_ip_frame, anchor="nw")
@@ -66,14 +61,7 @@ class global_defines:
     dig_op_canvas = Canvas(
         tc_dig_op, width=6, height=6, scrollregion=(0, 0, 1450, 1100)
     )
-    # hbar = Scrollbar(tc_dig_op, orient=HORIZONTAL)
-    # hbar.pack(side=BOTTOM, fill=X)
-    # hbar.config(command=dig_op_canvas.xview)
-    # vbar = Scrollbar(tc_dig_op, orient=VERTICAL)
-    # vbar.pack(side=RIGHT, fill=Y)
-    # vbar.config(command=dig_op_canvas.yview)
     dig_op_canvas.config(width=6, height=6)
-    # dig_op_canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
     dig_op_canvas.pack(side=LEFT, expand=True, fill=BOTH)
     dig_op_frame = Frame(dig_op_canvas)
     dig_op_canvas.create_window((0, 0), window=dig_op_frame, anchor="nw")
@@ -84,14 +72,7 @@ class global_defines:
     vol_ip_canvas = Canvas(
         tc_vol_ip, width=6, height=6, scrollregion=(0, 0, 1450, 1100)
     )
-    # hbar = Scrollbar(tc_vol_ip, orient=HORIZONTAL)
-    # hbar.pack(side=BOTTOM, fill=X)
-    # hbar.config(command=vol_ip_canvas.xview)
-    # vbar = Scrollbar(tc_vol_ip, orient=VERTICAL)
-    # vbar.pack(side=RIGHT, fill=Y)
-    # vbar.config(command=vol_ip_canvas.yview)
     vol_ip_canvas.config(width=6, height=6)
-    # vol_ip_canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
     vol_ip_canvas.pack(side=LEFT, expand=True, fill=BOTH)
     volt_ip_frame = Frame(vol_ip_canvas)
     vol_ip_canvas.create_window((0, 0), window=volt_ip_frame, anchor="nw")
@@ -102,14 +83,7 @@ class global_defines:
     vol_op_canvas = Canvas(
         tc_vol_op, width=6, height=6, scrollregion=(0, 0, 1450, 1100)
     )
-    # hbar = Scrollbar(tc_vol_op, orient=HORIZONTAL)
-    # hbar.pack(side=BOTTOM, fill=X)
-    # hbar.config(command=vol_op_canvas.xview)
-    # vbar = Scrollbar(tc_vol_op, orient=VERTICAL)
-    # vbar.pack(side=RIGHT, fill=Y)
-    # vbar.config(command=vol_op_canvas.yview)
     vol_op_canvas.config(width=6, height=6)
-    # vol_op_canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
     vol_op_canvas.pack(side=LEFT, expand=True, fill=BOTH)
     volt_op_frame = Frame(vol_op_canvas)
     vol_op_canvas.create_window((0, 0), window=volt_op_frame, anchor="nw")
@@ -120,35 +94,11 @@ class global_defines:
     pwm_ip_canvas = Canvas(
         tc_pwm_ip, width=6, height=6, scrollregion=(0, 0, 1450, 1100)
     )
-    # hbar = Scrollbar(tc_pwm_ip, orient=HORIZONTAL)
-    # hbar.pack(side=BOTTOM, fill=X)
-    # hbar.config(command=pwm_ip_canvas.xview)
-    # vbar = Scrollbar(tc_pwm_ip, orient=VERTICAL)
-    # vbar.pack(side=RIGHT, fill=Y)
-    # vbar.config(command=pwm_ip_canvas.yview)
     pwm_ip_canvas.config(width=6, height=6)
-    # pwm_ip_canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
     pwm_ip_canvas.pack(side=LEFT, expand=True, fill=BOTH)
     pwm_ip_frame = Frame(pwm_ip_canvas)
     pwm_ip_canvas.create_window((0, 0), window=pwm_ip_frame, anchor="nw")
 
-    # PWM O/P
-    # tc_pwm_op = ttk.Frame(tc)
-    # tc_pwm_op.pack(side="left")
-    # pwm_op_canvas = Canvas(
-    #     tc_pwm_op, width=6, height=6, scrollregion=(0, 0, 1450, 1100)
-    # )
-    # hbar = Scrollbar(tc_pwm_op, orient=HORIZONTAL)
-    # hbar.pack(side=BOTTOM, fill=X)
-    # hbar.config(command=pwm_op_canvas.xview)
-    # vbar = Scrollbar(tc_pwm_op, orient=VERTICAL)
-    # vbar.pack(side=RIGHT, fill=Y)
-    # vbar.config(command=pwm_op_canvas.yview)
-    # pwm_op_canvas.config(width=6, height=6)
-    # pwm_op_canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
-    # pwm_op_canvas.pack(side=LEFT, expand=True, fill=BOTH)
-    # pwm_op_frame = Frame(pwm_op_canvas)
-    # pwm_op_canvas.create_window((0, 0), window=pwm_op_frame, anchor="nw")
 
     # Frequency
     tc_freq_op = ttk.Frame(tc)
@@ -156,14 +106,7 @@ class global_defines:
     freq_op_canvas = Canvas(
         tc_freq_op, width=6, height=6, scrollregion=(0, 0, 1450, 1100)
     )
-    # hbar = Scrollbar(tc_freq_op, orient=HORIZONTAL)
-    # hbar.pack(side=BOTTOM, fill=X)
-    # hbar.config(command=freq_op_canvas.xview)
-    # vbar = Scrollbar(tc_freq_op, orient=VERTICAL)
-    # vbar.pack(side=RIGHT, fill=Y)
-    # vbar.config(command=freq_op_canvas.yview)
     freq_op_canvas.config(width=6, height=6)
-    # freq_op_canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
     freq_op_canvas.pack(side=LEFT, expand=True, fill=BOTH)
     freq_op_frame = Frame(freq_op_canvas)
     freq_op_canvas.create_window((0, 0), window=freq_op_frame, anchor="nw")
@@ -174,14 +117,7 @@ class global_defines:
     settings_canvas = Canvas(
         tc_settings, width=6, height=6, scrollregion=(0, 0, 1450, 1100)
     )
-    # hbar = Scrollbar(tc_settings, orient=HORIZONTAL)
-    # hbar.pack(side=BOTTOM, fill=X)
-    # hbar.config(command=settings_canvas.xview)
-    # vbar = Scrollbar(tc_settings, orient=VERTICAL)
-    # vbar.pack(side=RIGHT, fill=Y)
-    # vbar.config(command=settings_canvas.yview)
     settings_canvas.config(width=6, height=6)
-    # settings_canvas.config(xscrollcommand=hbar.set, yscrollcommand=vbar.set)
     settings_canvas.pack(side=LEFT, expand=True, fill=BOTH)
     setting_frame = Frame(settings_canvas)
     settings_canvas.create_window((0, 0), window=setting_frame, anchor="nw")
@@ -193,7 +129,7 @@ class global_defines:
     tc.add(tc_vol_op, text="AnalogOut")
     tc.add(tc_pwm_ip, text="PWMIn")
     tc.add(tc_freq_op, text="FreqOut")
-    # tc.add(tc_settings, text="Settings")
+    tc.add(tc_settings, text="Settings")
 
     tc.pack(expand=1, fill="both")
 
@@ -212,7 +148,9 @@ class global_defines:
 
     # general spn/widgets
     toggle = 0  # Used for update_ui dictionary
-    dig_ip_button = []  # Array of buttons listed on DIG I/P
+    dig_ip_button = []  # Array of buttons listed on DIG I/P used to indicate input status (Green=HIGH,Red=LOW)
+    dig_ip_update = []  # buttons to update digital input threshold
+    dig_ip_entry = []   # entry to write digin threshold
     dig_ip_options = []  # Array of option menus listed on DIG I/P
     dig_op_button = []  # Array of buttons under DIG O/P
     open_option = []
@@ -220,9 +158,12 @@ class global_defines:
     open_mode = {}
     volt_ip_label = []
     volt_op_label = []
-    pwm_ip_label = []
-    pwm_op_label = []
-    freq_label = []
+    pwm_ip_label_freq = []
+    pwm_ip_label_duty = []
+    pwm_thresh_label = []
+    freq_label_freq = []
+    freq_label_duty = []
+    duty_label = []
     pulse_label = []
     volt_ip_button = []
     volt_op_button = []
@@ -321,6 +262,9 @@ class global_defines:
 
 
     # settings
+    slot_num_box = tk.Entry
+    aux_box = tk.Entry
+    board_box = tk.Entry
     KeyIsON = 1
     Key_Button = 0
     fei_compatible = 0
