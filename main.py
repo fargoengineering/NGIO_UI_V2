@@ -32,18 +32,18 @@ def slot_type_thread():
 
 # set initial slot types from excel
 # Not sure this is working as expected...10/30
-time.sleep(3)
+time.sleep(1)
 ec.set_types()
 
 ui_update_thread()
 
 slot_type_thread()
 
+ui.mainloop()
 end = time.time()
 boot_time = end - start
 print("Boot Time = %s seconds" % boot_time)
 
-ui.mainloop()
 
 # Close ethernet connection here:
 ec.close_ec()
