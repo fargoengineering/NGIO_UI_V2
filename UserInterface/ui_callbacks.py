@@ -28,8 +28,7 @@ class ui_callbacks:
         if(input > threshold):
             self._uc.dig_ip_button[i].config(background = "green")
         else:
-            self._uc.dig_ip_button[i].config(background = "red")    
-                
+            self._uc.dig_ip_button[i].config(background = "red")
         print("DigIN "+str(sp))
 
     def dig_out_uc(self, i):        
@@ -120,3 +119,37 @@ class ui_callbacks:
         self._ec.update_pdo(5,slot_num,board_num,data1,data2,data3,data4,6)
     
         print("FREQOUT "+str(sp))
+        
+    def relay_send(self,spn,selected_val):
+                
+        board_num = int(self._uc.board_dict[spn])
+        slot_num = int(self._uc.channel_dict[spn])
+        
+        relay_board = int(self._uc.relay_board_dict[spn])
+        relay_channel = int(self._uc.relay_channel_dict[spn])
+        relay_type = str(self._uc.relay_type_dict[spn])
+        
+        if relay_type == "IN":
+            io_type = 1
+        elif relay_type == "OUT":
+            io_type = 0 
+            
+        if selected_val == "OpenCircuit":
+            state = 1
+        elif selected_val == "BatteryShort":
+            state = 2
+        elif selected_val == "GroundShort":
+            state = 3
+        elif selected_val == "Bypass":
+            state = 4
+            
+        print("slot "+ str(slot_num))
+        print("board "+ str(board_num))
+        print("relay board "+str(relay_board))
+        print("relay channel "+str(relay_channel))
+        print("state "+str(state))
+        print("io type "+str(io_type))
+            
+        # self._ec.update_pdo(7,slot_num,board_num,relay_board,relay_channel,state,io_type)
+        
+        

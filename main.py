@@ -44,6 +44,5 @@ end = time.time()
 boot_time = end - start
 print("Boot Time = %s seconds" % boot_time)
 
-
 # Close ethernet connection here:
 ec.close_ec()

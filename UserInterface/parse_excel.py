@@ -37,12 +37,24 @@ class parse_excel:
                 self._pe.spn_list.append(spn)
                 spn_data = self.df.loc[i, "type"]
                 spn_type = str(spn_data)
+                
+                # Check for relay control
+                relay_board = self.df.loc[i,"CANBoardNum"]
+                relay_channel = self.df.loc[i,"CANChannel"]
+                relay_type = self.df.loc[i,"IO_type"]
+                
+                if(str(relay_type) != "nan"):
+                    self._pe.relay_bool_dict.update({spn:1})
+                
+                self._pe.relay_board_dict.update({spn:relay_board})
+                self._pe.relay_channel_dict.update({spn:relay_channel})
+                self._pe.relay_type_dict.update({spn:relay_type})
 
                 # Check if 3 columns are configured:
                 board_num = self.df.loc[i,"Board_Num"]
                 channel = self.df.loc[i,"Channel"]
                 self._pe.board_dict.update({spn:board_num})
-                self._pe.channel_dict.update({spn:channel})                
+                self._pe.channel_dict.update({spn:channel})
                 # Only if type column has valid entries
                 if (
                     (self._pe.dig_ip_str in spn_type)

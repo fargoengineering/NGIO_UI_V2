@@ -39,7 +39,7 @@ class generate_ui:
             self._ge.dig_ip_entry.append(0)
             self._ge.dig_ip_update.append(0)
             self._ge.dig_ip_button.append(0)
-            # self._ge.dig_ip_option.append(0)
+            self._ge.dig_ip_option.append(0)
             # self._ge.dig_ip_option_var.append(tk.StringVar())
             
             self._ge.dig_ip_entry[i] = tk.Entry(
@@ -75,12 +75,12 @@ class generate_ui:
                 command=partial(self.ui_call.dig_in_uc, i),
             )
 
-            # self._ge.dig_ip_option[i] = tk.OptionMenu(
-            #     self._ge.dig_ip_frame,
-            #     self._ge.dig_ip_option_var[i],
-            #     *self._ge.dig_ip_options,
-            #     command=partial(self.ui_call.output_send, self._ge.dig_ip_spn[i])
-            # )
+            self._ge.dig_ip_option[i] = tk.OptionMenu(
+                self._ge.dig_ip_frame,
+                tk.StringVar(self._ge.dig_ip_frame),
+                *self._ge.dropdown_relay_options,
+                command=partial(self.ui_call.relay_send, self._ge.dig_ip_spn[i])
+            )
 
             label = tk.Label(
                 self._ge.dig_ip_frame,
@@ -92,14 +92,12 @@ class generate_ui:
             self._ge.dig_ip_mode.update({i: 0})
 
             spn = self._ge.dig_ip_spn[i]
+            
             # bno = self._ge.board_dict[spn]
-
             # tempList = []
             # if bno in self._ge.board_wid_dict:
             #     tempList = self._ge.board_wid_dict[bno]
-
             # tempList.append(self._ge.dig_ip_option[i])
-
             # self._ge.board_wid_dict.update({bno: tempList})
 
             # first column
@@ -107,17 +105,22 @@ class generate_ui:
                 label.grid(row=i, column=0)
                 self._ge.dig_ip_entry[i].grid(row=i,column=1)
                 self._ge.dig_ip_update[i].grid(row=i,column=2)
-                self._ge.dig_ip_button[i].grid(row=i, column=3)
+                self._ge.dig_ip_button[i].grid(row=i,column=3)
+                if self._ge.relay_bool_dict.get(self._ge.dig_ip_spn[i]):
+                    self._ge.dig_ip_option[i].grid(row=i,column=4)
             # second column
             else:
-                label.grid(row=i - 19, column=4)
-                self._ge.dig_ip_entry[i].grid(row=i-19,column=5)
-                self._ge.dig_ip_update[i].grid(row=i-19,column=6)
-                self._ge.dig_ip_button[i].grid(row=i - 19, column=7)
+                label.grid(row=i - 19, column=5)
+                self._ge.dig_ip_entry[i].grid(row=i-19,column=6)
+                self._ge.dig_ip_update[i].grid(row=i-19,column=7)
+                self._ge.dig_ip_button[i].grid(row=i-19, column=8)
+                if self._ge.relay_bool_dict.get(self._ge.dig_ip_spn[i]):
+                    self._ge.dig_ip_option[i].grid(row=i-19,column=9)
 
         # Digital Output Tab
         for i in range(len(self._ge.dig_op_spn)):
             self._ge.dig_op_button.append(0)
+            self._ge.dig_op_option.append(0)
             self._ge.dig_op_button[i] = tk.Button(
                 self._ge.dig_op_frame,
                 height=1,
@@ -134,6 +137,13 @@ class generate_ui:
                 bg="azure3",
                 width=30,
             )
+            
+            self._ge.dig_op_option[i] = tk.OptionMenu(
+                self._ge.dig_op_frame,
+                tk.StringVar(self._ge.dig_op_frame),
+                *self._ge.dropdown_relay_options,
+                command=partial(self.ui_call.relay_send, self._ge.dig_op_spn[i])
+            )
             if 0 <= i < 31:
                 row = i
                 column = 1
@@ -145,12 +155,15 @@ class generate_ui:
                 column = 5
             label.grid(row=row, column=column + 1)
             self._ge.dig_op_button[i].grid(row=row, column=column + 2)
+            if self._ge.relay_bool_dict.get(self._ge.dig_op_spn[i]):
+                self._ge.dig_op_option[i].grid(row=row,column=column+3)
 
         # Voltage In
         for i in range(len(self._ge.vol_ip_spn)):  # length = 58
             self._ge.volt_ip_label.append(0)
             self._ge.volt_ip_button.append(0)
             self._ge.volt_ip_toggle.append(0)
+            self._ge.volt_ip_option.append(0)
             self._ge.relay_switch.append(1)
             self._ge.volt_ip_string.append(tk.StringVar())
             label = tk.Label(
@@ -200,6 +213,12 @@ class generate_ui:
                 bg="Red",
                 command=partial(self.ui_call.volt_in_uc, i),
             )
+            self._ge.volt_ip_option[i] = tk.OptionMenu(
+                self._ge.volt_ip_frame,
+                tk.StringVar(self._ge.volt_ip_frame),
+                *self._ge.dropdown_relay_options,
+                command=partial(self.ui_call.relay_send, self._ge.vol_ip_spn[i])
+            )
 
             if i < 29:
                 header.grid(row=0,column=0)
@@ -207,10 +226,14 @@ class generate_ui:
                 in_label.grid(row=0,column=1)
                 self._ge.volt_ip_label[i].grid(row=i+1, column=1)
                 self._ge.volt_ip_button[i].grid(row=i+1, column=2)
+                if self._ge.relay_bool_dict.get(self._ge.vol_ip_spn[i]):
+                    self._ge.volt_ip_option[i].grid(row=i+1,column=3)
             else:
                 label.grid(row=i - 28, column=4)
                 self._ge.volt_ip_label[i].grid(row=i - 28, column=5)
                 self._ge.volt_ip_button[i].grid(row=i - 28, column=6)
+                if self._ge.relay_bool_dict.get(self._ge.dig_op_spn[i]):
+                    self._ge.volt_ip_option[i].grid(row=i-28,column=7)
 
             self._ge.volt_ip_label[i].insert(0, "0")
             
@@ -219,6 +242,7 @@ class generate_ui:
             self._ge.volt_op_label.append(0)
             self._ge.volt_op_button.append(0)
             self._ge.volt_op_toggle.append(0)
+            self._ge.volt_op_option.append(0)
             self._ge.relay_switch.append(1)
             self._ge.volt_op_string.append(tk.StringVar())
             label = tk.Label(
@@ -268,6 +292,12 @@ class generate_ui:
                 bg="Red",
                 command=partial(self.ui_call.volt_out_uc, i),
             )
+            self._ge.volt_op_option[i] = tk.OptionMenu(
+                self._ge.volt_op_frame,
+                tk.StringVar(self._ge.volt_op_frame),
+                *self._ge.dropdown_relay_options,
+                command=partial(self.ui_call.relay_send, self._ge.vol_op_spn[i])
+            )
 
             if i < 29:
                 header.grid(row=0,column=0)
@@ -275,10 +305,14 @@ class generate_ui:
                 out_label.grid(row=0,column=1)
                 self._ge.volt_op_label[i].grid(row=i+1, column=1)
                 self._ge.volt_op_button[i].grid(row=i+1, column=2)
+                if self._ge.relay_bool_dict.get(self._ge.vol_op_spn[i]):
+                    self._ge.volt_op_option[i].grid(row=i+1,column=3)
             else:
                 label.grid(row=i - 28, column=3)
                 self._ge.volt_op_label[i].grid(row=i - 28, column=4)
                 self._ge.volt_op_button[i].grid(row=i - 28, column=5)
+                if self._ge.relay_bool_dict.get(self._ge.volt_op_spn[i]):
+                    self._ge.volt_op_option[i].grid(row=i - 28,column=6)
 
             self._ge.volt_op_label[i].insert(0, "0")
             
@@ -288,6 +322,7 @@ class generate_ui:
             self._ge.pwm_ip_label_duty.append(0)
             self._ge.pwm_thresh_label.append(0)
             self._ge.pwm_ip_button.append(0)
+            self._ge.pwm_ip_option.append(0)
             self._ge.pwm_ip_toggle.append(0)
             self._ge.pwm_ip_string.append(tk.StringVar())
             label = tk.Label(
@@ -354,6 +389,12 @@ class generate_ui:
                 bg="Steel Blue",
                 command=partial(self.ui_call.pwm_in_uc, i),
             )
+            self._ge.pwm_ip_option[i] = tk.OptionMenu(
+                self._ge.pwm_ip_frame,
+                tk.StringVar(self._ge.pwm_ip_frame),
+                *self._ge.dropdown_relay_options,
+                command=partial(self.ui_call.relay_send, self._ge.pwm_ip_spn[i])
+            )
             
             header.grid(row=0,column=0)
             label.grid(row=i+1, column=0)
@@ -364,6 +405,9 @@ class generate_ui:
             duty_name.grid(row=0,column=3)
             self._ge.pwm_ip_label_duty[i].grid(row=i+1, column=3)
             self._ge.pwm_ip_button[i].grid(row=i+1, column=4)
+            if self._ge.relay_bool_dict.get(self._ge.pwm_ip_spn[i]):
+                self._ge.pwm_ip_option[i].grid(row=i+1,column=5)
+            
             self._ge.pwm_thresh_label[i].insert(0,"1000")
             self._ge.pwm_ip_label_duty[i].insert(0, "0")
             self._ge.pwm_ip_label_freq[i].insert(0, "0")
@@ -374,6 +418,7 @@ class generate_ui:
             self._ge.freq_label_duty.append(0)
             self._ge.duty_label.append(0)
             self._ge.freq_button.append(0)
+            self._ge.freq_op_option.append(0)
             self._ge.freq_toggle.append(0)
             self._ge.freq_string.append(tk.StringVar())
             label = tk.Label(
@@ -427,6 +472,12 @@ class generate_ui:
                 bg="Steel Blue",
                 command=partial(self.ui_call.freq_out_uc, i),
             )
+            self._ge.freq_op_option[i] = tk.OptionMenu(
+                self._ge.freq_op_frame,
+                tk.StringVar(self._ge.freq_op_frame),
+                *self._ge.dropdown_relay_options,
+                command=partial(self.ui_call.relay_send, self._ge.fq_op_spn[i])
+            )
             header.grid(row=0,column=0)
             label.grid(row=i+1, column=0)
             freq_name.grid(row=0,column=1)
@@ -434,6 +485,9 @@ class generate_ui:
             duty_name.grid(row=0,column=2)
             self._ge.freq_label_duty[i].grid(row=i+1, column=2)
             self._ge.freq_button[i].grid(row=i+1, column=3)
+            
+            if self._ge.relay_bool_dict.get(self._ge.fq_op_spn[i]):
+                self._ge.freq_op_option[i].grid(row=i+1,column=4)
             
             self._ge.freq_label_duty[i].insert(0, "0")
             self._ge.freq_label_freq[i].insert(0, "0")

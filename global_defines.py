@@ -147,17 +147,24 @@ class global_defines:
     unload_rate = tk.StringVar()
 
     # general spn/widgets
+    dropdown_relay_options = ["OpenCircuit","BatteryShort","GroundShort","Bypass"]
     toggle = 0  # Used for update_ui dictionary
     dig_ip_button = []  # Array of buttons listed on DIG I/P used to indicate input status (Green=HIGH,Red=LOW)
     dig_ip_update = []  # buttons to update digital input threshold
     dig_ip_entry = []   # entry to write digin threshold
     dig_ip_options = []  # Array of option menus listed on DIG I/P
     dig_op_button = []  # Array of buttons under DIG O/P
+    dig_op_option = []
     open_option = []
     open_button = []
     open_mode = {}
     volt_ip_label = []
     volt_op_label = []
+    volt_ip_option = []
+    volt_op_option = []
+    pwm_ip_option = []
+    freq_op_option = []
+    
     pwm_ip_label_freq = []
     pwm_ip_label_duty = []
     pwm_thresh_label = []
@@ -216,7 +223,12 @@ class global_defines:
     ping_dict = {}  # Dictionary with Board Number : Boolean active value
     time_dict = {}  # Dictionary containing CAN timestamps
     board_dict = {}  # Dictionary with SPN : Board Number pairs
-
+    
+    # Lists for relays/CAN
+    relay_board_dict = {}
+    relay_channel_dict = {}
+    relay_type_dict = {}
+    relay_bool_dict = {}
     board_list = []
     channel_dict = {}  # Dictionary with SPN : relay(channel) pairs
     dig_state = {}  # Dictionary with SPN : default state of 0
@@ -236,6 +248,7 @@ class global_defines:
     name_list = []
     dig_ip_spn = []
     dig_ip_option = []
+    
     dig_op_spn = []
     vol_ip_spn = []
     vol_op_spn = []
