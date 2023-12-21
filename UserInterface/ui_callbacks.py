@@ -123,30 +123,37 @@ class ui_callbacks:
     def set_input_relay(self,board,slot,state):
         self._ec.slot_command[slot-1] = 7        # set relay command
         self._ec.slot_aux[slot-1] = state        
-        self._ec.master.slaves[board-1].output = self._ec.pack_output()
-        self._ec.master.send_processdata()
-        self._ec.master.receive_processdata(5000)
-        # Reset PDO so we don't keep toggling the relay for shorting..
-        time.sleep(0.5)
-        self._ec.slot_command[slot-1] = 0
-        self._ec.master.slaves[board-1].output = self._ec.pack_output()
-        self._ec.master.send_processdata()
-        self._ec.master.receive_processdata(5000)
-        
+        try:
+            self._ec.master.slaves[board-1].output = self._ec.pack_output()
+            self._ec.master.send_processdata()
+            self._ec.master.receive_processdata(5000)
+            # Reset PDO so we don't keep toggling the relay for shorting..
+            time.sleep(0.5)
+            self._ec.slot_command[slot-1] = 0
+            self._ec.master.slaves[board-1].output = self._ec.pack_output()
+            self._ec.master.send_processdata()
+            self._ec.master.receive_processdata(5000)
+        except:
+            print(f"Board #{board} not detected!")
+            
     def set_output_relay(self,board,channel,state):
         self._ec.slot_command[channel-1] = 13   # send CAN command
         self._ec.slot_data[channel-1] = board               # RELAY BOARD NUMBER, NOT NGIO BOARD NUMBER
         self._ec.slot_aux[channel-1] = state        
-        self._ec.master.slaves[board-1].output = self._ec.pack_output()
-        self._ec.master.send_processdata()
-        self._ec.master.receive_processdata(5000)
-        # Reset PDO?????? ...YES otherwise it will keep doing a short....
-        time.sleep(0.5)
-        self._ec.slot_command[channel-1] = 0
-        self._ec.master.slaves[board-1].output = self._ec.pack_output()
-        self._ec.master.send_processdata()
-        self._ec.master.receive_processdata(5000)
-         
+        try:
+            self._ec.master.slaves[board-1].output = self._ec.pack_output()
+            self._ec.master.send_processdata()
+            self._ec.master.receive_processdata(5000)
+            # Reset PDO?????? ...YES otherwise it will keep doing a short....
+            time.sleep(0.5)
+            self._ec.slot_command[channel-1] = 0
+            self._ec.master.slaves[board-1].output = self._ec.pack_output()
+            self._ec.master.send_processdata()
+            self._ec.master.receive_processdata(5000)
+        except:
+            print(f"Board #{board} not detected!")
+            
+            
     def relay_send(self,spn,selected_val):                
         board_num = int(self._uc.board_dict[spn])                   # Board_Num : Column F
         slot_num = int(self._uc.channel_dict[spn])                  # Channel   : Column E

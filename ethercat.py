@@ -23,13 +23,20 @@ class etherCAT:
         self.slot_command = [0] * 32          # slot command byte
         self.slot_data = [0] * 32             # slot data [64 bytes]
         self.slot_aux = [0] * 32              # slot auxillary data (i.e slot type, ble status)
-        
         self.slot_command_in = [0] * 32
         self.slot_data_in = [0] * 32
         self.slot_aux_in = [0] * 32
         self.pack_format  = '@32l32B32B'
-        
         self.gd = ob1
+        
+    def pause_pdo(self):
+        self.slot_command = [0] * 32
+        self.slot_data = [0] * 32
+        self.slot_aux = [0] * 32
+        for slave in self.master.slaves:
+            slave.output = self.pack_output()
+        self.master.send_processdata()
+        self.master.receive_processdata(5000)
         
     def set_types(self):
         print("initial types set")
@@ -49,9 +56,7 @@ class etherCAT:
                 self.update_pdo(5,slot,board_num,1,1,1,1,5)
             elif self.gd.type_dict[spn] == 'freqout':
                 self.update_pdo(5,slot,board_num,1,1,1,1,6)
-            
-                
-                                
+                                            
     def set_output(self,c,slot_number,data1_value,data2_value,data3_value,data4_value,data5_value):
         self.slot_command[int(slot_number)-1] = c
         values = [int(byte) for byte in [data1_value,data2_value,data3_value,data4_value]]
@@ -61,14 +66,11 @@ class etherCAT:
         self.slot_aux[int(slot_number)-1] = data5_value
             
     def pack_output(self):
-        # Convert the first 32 values in slot_command to integers
-        command_values = [int(val) for val in self.slot_command[:32]]        
-        # Convert the next 32 values in slot_data to longs
-        data_values = [int(val) for val in self.slot_data[:32]]        
-        # Convert the last 32 values in slot_aux to integers
+        # Convert all slot values to integers
+        command_values = [int(val) for val in self.slot_command[:32]]
+        data_values = [int(val) for val in self.slot_data[:32]]
         aux_values = [int(val) for val in self.slot_aux[:32]]
-        slot_all_pdo = [0] * 96         
-        self.packed_output = struct.pack(self.pack_format, *data_values, *command_values, *aux_values)      #192        
+        self.packed_output = struct.pack(self.pack_format, *data_values, *command_values, *aux_values)   #192        
         return self.packed_output
     
     def unpack_input(self):
@@ -114,16 +116,16 @@ class etherCAT:
                 raise Exception('not all slaves reached OP state')
                 
     def update_pdo(self,command,slot_number,board_number,data1,data2,data3,data4,data5):     
-        # WRITE OUTPUT PDO
-        # 20 byte code:
-        # packed_output = struct.pack('BBBBBBBB',int(command),int(slot_number),int(board_number),int(data1),int(data2),int(data3),int(data4),int(data5))    # old pdo version
-        # self.master.slaves[board_number-1].output = packed_output
-        ###############
+        # SEND OUTPUT PDO
         # 192 byte code: 
-        self.set_output(command,slot_number,data1,data2,data3,data4,data5)
-        self.master.slaves[board_number-1].output = self.pack_output()
+        try:
+            self.set_output(command,slot_number,data1,data2,data3,data4,data5)
+            self.master.slaves[board_number-1].output = self.pack_output()
+        except:
+            print(f"Board #{board_number} not found!")
         ################
-        self.master.send_processdata()        
+        self.master.send_processdata()   
+        self.master.receive_processdata(5000)     
         time.sleep(0.05) 
         
     def read_pdo_voltage(self):
