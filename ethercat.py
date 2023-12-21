@@ -32,33 +32,24 @@ class etherCAT:
         self.gd = ob1
         
     def set_types(self):
-        '''
-        THIS FUNCTION IS DEPRECATED - made for 20 byte PDO
-        '''
         print("initial types set")
         c = 5
-        board_num = 1
         for spn in self.gd.type_dict:
-            # print(spn)
+            board_num = self.gd.board_dict[spn]
+            slot = self.gd.channel_dict[spn]
             if self.gd.type_dict[spn] == 'digin':
-                # print("digitalin")
-                self.update_pdo(c,spn,board_num,1,1,1,1,2)
+                self.update_pdo(5,slot,board_num,1,1,1,1,2)
             elif self.gd.type_dict[spn] == 'digout':
-                # print("digitalout")
-                self.update_pdo(c,spn,board_num,1,1,1,1,1)
+                self.update_pdo(5,slot,board_num,1,1,1,1,1)
             elif self.gd.type_dict[spn] == 'voltin':
-                # print("voltin")
-                self.update_pdo(c,spn,board_num,1,1,1,1,3)
+                self.update_pdo(5,slot,board_num,1,1,1,1,3)
             elif self.gd.type_dict[spn] == 'voltout':
-                # print("voltout")
-                self.update_pdo(c,spn,board_num,1,1,1,1,4)
+                self.update_pdo(5,slot,board_num,1,1,1,1,4)
             elif self.gd.type_dict[spn] == 'pwmin':
-                # print("pwmout")
-                self.update_pdo(c,spn,board_num,1,1,1,1,5)
+                self.update_pdo(5,slot,board_num,1,1,1,1,5)
             elif self.gd.type_dict[spn] == 'freqout':
-                # print("freqout")
-                self.update_pdo(c,spn,board_num,1,1,1,1,6)
-            # time.sleep(0.5)
+                self.update_pdo(5,slot,board_num,1,1,1,1,6)
+            
                 
                                 
     def set_output(self,c,slot_number,data1_value,data2_value,data3_value,data4_value,data5_value):
