@@ -12,6 +12,7 @@ ec = etherCAT(gd_obj)
 pe = parse_excel(gd_obj)
 gu = generate_ui(gd_obj,ec)
 ui = update_ui(gd_obj)
+uc = ui_callbacks(gd_obj,ec)
 
 pe.parse_excel()
 gu.generate_spn_ui()
@@ -29,7 +30,7 @@ def slot_type_thread():
     th1 = threading.Timer(25,ec.set_types)
     th1.daemon = True
     th1.start() # 10 second thread
-
+    
 # set initial slot types from excel
 # Not sure this is working as expected...10/30
 time.sleep(1)
@@ -37,7 +38,7 @@ ec.set_types()
 
 ui_update_thread()
 
-slot_type_thread()
+# slot_type_thread()
 
 ui.mainloop()
 end = time.time()

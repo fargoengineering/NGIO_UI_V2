@@ -27,11 +27,14 @@ class etherCAT:
         self.slot_command_in = [0] * 32
         self.slot_data_in = [0] * 32
         self.slot_aux_in = [0] * 32
-        self.pack_format = '32B32l32B'        # 32 bytes, 32 longs, 32 bytes [command, data, auxillary]
+        self.pack_format  = '@32l32B32B'
         
         self.gd = ob1
         
     def set_types(self):
+        '''
+        THIS FUNCTION IS DEPRECATED - made for 20 byte PDO
+        '''
         print("initial types set")
         c = 5
         board_num = 1
@@ -55,30 +58,26 @@ class etherCAT:
             elif self.gd.type_dict[spn] == 'freqout':
                 # print("freqout")
                 self.update_pdo(c,spn,board_num,1,1,1,1,6)
-            time.sleep(0.5)
+            # time.sleep(0.5)
                 
                                 
     def set_output(self,c,slot_number,data1_value,data2_value,data3_value,data4_value,data5_value):
-        self.slot_command[int(slot_number)] = c
+        self.slot_command[int(slot_number)-1] = c
         values = [int(byte) for byte in [data1_value,data2_value,data3_value,data4_value]]
         shifted_vals = [value << (8 * i) for i, value in enumerate(values)]
         data_out = sum(shifted_vals)
-        self.slot_data[int(slot_number)] = data_out
-        self.slot_aux[int(slot_number)] = data5_value
-    
+        self.slot_data[int(slot_number)-1] = data_out
+        self.slot_aux[int(slot_number)-1] = data5_value
+            
     def pack_output(self):
         # Convert the first 32 values in slot_command to integers
-        command_values = [int(val) for val in self.slot_command[:32]]
-        
+        command_values = [int(val) for val in self.slot_command[:32]]        
         # Convert the next 32 values in slot_data to longs
-        data_values = [int(val) for val in self.slot_data[:32]]
-        
+        data_values = [int(val) for val in self.slot_data[:32]]        
         # Convert the last 32 values in slot_aux to integers
         aux_values = [int(val) for val in self.slot_aux[:32]]
-        
-        # Pack the values using the format string and the *args syntax
-        self.packed_output = struct.pack(self.pack_format, *command_values, *data_values, *aux_values)
-        
+        slot_all_pdo = [0] * 96         
+        self.packed_output = struct.pack(self.pack_format, *data_values, *command_values, *aux_values)      #192        
         return self.packed_output
     
     def unpack_input(self):
@@ -123,15 +122,15 @@ class etherCAT:
                         print('{} did not reach OP state'.format(slave.name))
                 raise Exception('not all slaves reached OP state')
                 
-    def update_pdo(self,command,slot_number,board_number,data1,data2,data3,data4,data5):        
+    def update_pdo(self,command,slot_number,board_number,data1,data2,data3,data4,data5):     
         # WRITE OUTPUT PDO
         # 20 byte code:
-        packed_output = struct.pack('BBBBBBBB',int(command),int(slot_number),int(board_number),int(data1),int(data2),int(data3),int(data4),int(data5))    # old pdo version
-        self.master.slaves[board_number-1].output = packed_output
+        # packed_output = struct.pack('BBBBBBBB',int(command),int(slot_number),int(board_number),int(data1),int(data2),int(data3),int(data4),int(data5))    # old pdo version
+        # self.master.slaves[board_number-1].output = packed_output
         ###############
         # 192 byte code: 
-        # packed_output = self.set_output(command,slot_number,data1,data2,data3,data4,data5)
-        # self.master.slaves[0].output = packed_output
+        self.set_output(command,slot_number,data1,data2,data3,data4,data5)
+        self.master.slaves[board_number-1].output = self.pack_output()
         ################
         self.master.send_processdata()        
         time.sleep(0.05) 
@@ -214,49 +213,6 @@ class etherCAT:
         time.sleep(1)
         self.master.close()
         time.sleep(1)
-                
-    def adc_to_voltage_old(self,adc_count):
-        # Define the data points
-        data_points = {
-            30: 0.0,
-            767: 3.3,
-            940: 4.0,
-            1163: 5.0,
-            1400: 6.0,
-            1870: 8.0,
-            1900: 10.0  # Added 10 volts with an ADC count of about 1900
-        }
-
-        # Sort the data points by ADC count
-        sorted_counts = sorted(data_points.keys())
-
-        # Handle values below the lowest ADC count
-        if adc_count < sorted_counts[0]:
-            return 0.0
-
-        # Find the two closest data points for interpolation
-        lower_count = sorted_counts[0]
-        upper_count = sorted_counts[-1]
-        for count in sorted_counts:
-            if count > adc_count:
-                upper_count = count
-                break
-            lower_count = count
-
-        # Check for exact match and return the corresponding voltage
-        if lower_count == upper_count:
-            return data_points[lower_count]
-
-        # Linear interpolation
-        lower_voltage = data_points[lower_count]
-        upper_voltage = data_points[upper_count]
-
-        voltage = lower_voltage + (adc_count - lower_count) * (upper_voltage - lower_voltage) / (upper_count - lower_count)
-        
-        # Round to two decimal places
-        voltage = round(voltage, 2)
-        
-        return voltage
 
     def adc_to_voltage(self,adc_value):
         # Define the ADC range and corresponding voltage range
@@ -301,5 +257,3 @@ class etherCAT:
 # # command, slot#, board#, data1,2,3,4,5
 # ec.update_pdo(5,1,1,4,5,6,7,8)
 # ec.close_ec()
-        
-        
