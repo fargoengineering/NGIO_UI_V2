@@ -22,7 +22,7 @@ class ui_callbacks:
         else:
             threshold = float(self._uc.dig_ip_entry[i].get())   
         print("threshold: "+str(threshold))   
-        input = self._ec.read_pdo_voltage()      
+        # input = self._ec.read_pdo_voltage() # DEPRECATED     
         print("input: "+str(input))
         # This part should be in the update_ui thread
         if(input > threshold):

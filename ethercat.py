@@ -73,18 +73,16 @@ class etherCAT:
         self.packed_output = struct.pack(self.pack_format, *data_values, *command_values, *aux_values)   #192        
         return self.packed_output
     
-    def unpack_input(self):
+    def unpack_input(self,packed_input):
         # Unpack the packed data into three separate arrays
-        unpacked_values = struct.unpack(self.pack_format, self.packed_output)
-        
+        unpacked_values = struct.unpack(self.pack_format_in, packed_input)
         # Update self.slot_command with the first 32 values
-        self.slot_command_in = list(unpacked_values[:32])
-        
-        # Update self.slot_data with the next 32 values
-        self.slot_data_in = list(unpacked_values[32:64])
-        
+        self.slot_command_in = list(unpacked_values[32:64])
+        # Update self.slot_data with the next 32*4 value
+        self.slot_data_in = list(unpacked_values[:32]) # 32:64
         # Update self.slot_aux with the last 32 values
-        self.slot_aux_in = list(unpacked_values[64:])
+        self.slot_aux_in = list(unpacked_values[64:]) # 64:
+        return unpacked_values
         
     def run_ec(self):        
         self.master.open(self.ec_adapter_name)   # make sure matching correct platform
@@ -118,12 +116,11 @@ class etherCAT:
     def update_pdo(self,command,slot_number,board_number,data1,data2,data3,data4,data5):     
         # SEND OUTPUT PDO
         # 192 byte code: 
+        self.set_output(command,slot_number,data1,data2,data3,data4,data5)
         try:
-            self.set_output(command,slot_number,data1,data2,data3,data4,data5)
             self.master.slaves[board_number-1].output = self.pack_output()
         except:
             print(f"Board #{board_number} not found!")
-        ################
         self.master.send_processdata()   
         self.master.receive_processdata(5000)     
         time.sleep(0.05) 
@@ -140,7 +137,6 @@ class etherCAT:
             # Now, unpacked_data contains the values as a tuple.
             data3 = unpacked_data[2]
 
-            
             a2d_count = self.adc_to_voltage(data3)
             return(a2d_count)
         except IndexError as e:
@@ -239,14 +235,8 @@ class etherCAT:
         board_num = int(self.gd.board_box.get())
         type = int(self.gd.aux_box.get())
         self.update_pdo(5,slot_num,board_num,1,1,1,1,type)
-
-
-# # Example usage:
-# ec = etherCAT()
-# adc_value = 1000  # Replace this with your ADC count
-# voltage = adc_to_voltage(adc_value)
-# print(f"ADC Count: {adc_value}, Voltage: {voltage} V")
-# ec.run_ec()
-# # command, slot#, board#, data1,2,3,4,5
-# ec.update_pdo(5,1,1,4,5,6,7,8)
-# ec.close_ec()
+        
+    def split_bytes(self,long):
+        data1 = ((long >> 16) & 0xFF00) | ((long >> 16) & 0xFF)
+        data2 = ((long) & 0xFF00) | (long & 0xFF)
+        return data1, data2
