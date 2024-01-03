@@ -7,9 +7,9 @@ import subprocess
 
 class global_defines:
     # testing with all hardware : 0, else 1
-    testing_active = 1
-    debug_mode = 0
-    debug_mode_button = 0
+    # testing_active = 1
+    # debug_mode = 0
+    # debug_mode_button = 0
 
     # Create the master object
     master = tk.Tk()

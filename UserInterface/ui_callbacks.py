@@ -22,7 +22,7 @@ class ui_callbacks:
         else:
             threshold = float(self._uc.dig_ip_entry[i].get())   
         print("threshold: "+str(threshold))   
-        # input = self._ec.read_pdo_voltage() # DEPRECATED     
+        input = self._ec.read_pdo_voltage(slot_num)
         print("input: "+str(input))
         # This part should be in the update_ui thread
         if(input > threshold):
@@ -52,7 +52,7 @@ class ui_callbacks:
         
         # Make sure the board is analog in
         self._ec.update_pdo(5,slot_num,board_num,0,0,0,0,3)
-        volt_in = self._ec.read_pdo_voltage()
+        volt_in = self._ec.read_pdo_voltage(slot_num)
         
         # Update the text box with input voltage
         self._uc.volt_ip_label[i].delete(0,END)
@@ -71,7 +71,7 @@ class ui_callbacks:
         data2 = volt_out & 0xFF
         
         # Make sure board is analog out
-        self._ec.update_pdo(5,slot_num,board_num,data1,data2,0,0,4)
+        self._ec.update_pdo(5,slot_num,board_num,data1,data2,0,1,4)     # data 4 =1 to enable tracking output
         
         print("VoltOUT "+str(sp))
         
@@ -86,7 +86,7 @@ class ui_callbacks:
         
         self._ec.update_pdo(5,slot_num,board_num,data1,data2,0,0,5)
         time.sleep(0.5)
-        duty,freq = self._ec.read_pdo_pwm()
+        duty,freq = self._ec.read_pdo_pwm(slot_num)
         
         self._uc.pwm_ip_label_freq[i].delete(0,END)
         self._uc.pwm_ip_label_freq[i].insert(0,freq)

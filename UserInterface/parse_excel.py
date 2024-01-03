@@ -23,6 +23,8 @@ class parse_excel:
         # path += "/Config_sheet_old.xlsx"  #Legacy Config for backwards compatibility testing
         self.df = pd.read_excel(path, "SPN", header=1)
         self._pe = ob
+        self.populated_rows = self.df.dropna(how="all")
+        
 
     def parse_excel(self):
         """
@@ -30,7 +32,8 @@ class parse_excel:
 
         Tkinter will generate necessary components, based on the excel configuration.
         """
-        for i in range(33):
+        # for i in range(33):
+        for i in range(len(self.populated_rows)):
             try:
                 # use i when indexing excel columns, use spn when updating dictionaries
                 spn = self.df.loc[i,"SPN"]

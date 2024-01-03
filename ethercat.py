@@ -41,29 +41,29 @@ class etherCAT:
     def set_types(self):
         print("initial types set")
         c = 5
-        for spn in self.gd.type_dict:
+        for spn in self.gd.spn_list:
             board_num = self.gd.board_dict[spn]
             slot = self.gd.channel_dict[spn]
+            self.slot_command[slot-1] = 5
             if self.gd.type_dict[spn] == 'digin':
                 self.update_pdo(5,slot,board_num,1,1,1,1,2)
+                # self.slot_aux[slot-1] = 2
             elif self.gd.type_dict[spn] == 'digout':
                 self.update_pdo(5,slot,board_num,1,1,1,1,1)
+                # self.slot_aux[slot-1] = 1
             elif self.gd.type_dict[spn] == 'voltin':
                 self.update_pdo(5,slot,board_num,1,1,1,1,3)
+                # self.slot_aux[slot-1] = 3
             elif self.gd.type_dict[spn] == 'voltout':
                 self.update_pdo(5,slot,board_num,1,1,1,1,4)
+                # self.slot_aux[slot-1] = 4
             elif self.gd.type_dict[spn] == 'pwmin':
                 self.update_pdo(5,slot,board_num,1,1,1,1,5)
+                # self.slot_aux[slot-1] = 5
             elif self.gd.type_dict[spn] == 'freqout':
                 self.update_pdo(5,slot,board_num,1,1,1,1,6)
-                                            
-    def set_output(self,c,slot_number,data1_value,data2_value,data3_value,data4_value,data5_value):
-        self.slot_command[int(slot_number)-1] = c
-        values = [int(byte) for byte in [data1_value,data2_value,data3_value,data4_value]]
-        shifted_vals = [value << (8 * i) for i, value in enumerate(values)]
-        data_out = sum(shifted_vals)
-        self.slot_data[int(slot_number)-1] = data_out
-        self.slot_aux[int(slot_number)-1] = data5_value
+                # self.slot_aux[slot-1] = 6
+                         
             
     def pack_output(self):
         # Convert all slot values to integers
@@ -75,7 +75,7 @@ class etherCAT:
     
     def unpack_input(self,packed_input):
         # Unpack the packed data into three separate arrays
-        unpacked_values = struct.unpack(self.pack_format_in, packed_input)
+        unpacked_values = struct.unpack(self.pack_format, packed_input)
         # Update self.slot_command with the first 32 values
         self.slot_command_in = list(unpacked_values[32:64])
         # Update self.slot_data with the next 32*4 value
@@ -85,11 +85,15 @@ class etherCAT:
         return unpacked_values
         
     def run_ec(self):        
+        
+        if len(self.master.slaves) > 0:
+            self.close_ec()
+            
         self.master.open(self.ec_adapter_name)   # make sure matching correct platform
         
         if self.master.config_init() > 0:            
             for i,slave in enumerate(self.master.slaves):
-                print(f"Slave name: {slave.name}")
+                print(f"Slave {i} name: {slave.name}")
                 
             self.master.config_map()
             
@@ -116,7 +120,19 @@ class etherCAT:
     def update_pdo(self,command,slot_number,board_number,data1,data2,data3,data4,data5):     
         # SEND OUTPUT PDO
         # 192 byte code: 
-        self.set_output(command,slot_number,data1,data2,data3,data4,data5)
+        self.slot_command[int(slot_number)-1] = command
+        # LSB
+        # values = [int(byte) for byte in [data1,data2,data3,data4]]
+        # shifted_vals = [value << (8 * i) for i, value in enumerate(values)]
+        # data_out = sum(shifted_vals)
+        
+        # MSB
+        values = [int(byte) for byte in [data1, data2, data3, data4]]
+        shifted_vals = [value << (8 * (3 - i)) for i, value in enumerate(values)]
+        data_out = sum(shifted_vals)
+
+        self.slot_data[int(slot_number)-1] = data_out
+        self.slot_aux[int(slot_number)-1] = data5
         try:
             self.master.slaves[board_number-1].output = self.pack_output()
         except:
@@ -125,41 +141,34 @@ class etherCAT:
         self.master.receive_processdata(5000)     
         time.sleep(0.05) 
         
-    def read_pdo_voltage(self):
+    def read_pdo_voltage(self,slot_num):
         # Read Input PDO
         self.master.send_processdata()
         self.master.receive_processdata(2000)
         try:
             voltage__bytes = self.master.slaves[0].input
-            # print(voltage__bytes)
-            # print(f"input as bytes: {voltage__bytes}")                                        
-            unpacked_data = struct.unpack('llHHH', voltage__bytes)
-            # Now, unpacked_data contains the values as a tuple.
-            data3 = unpacked_data[2]
-
-            a2d_count = self.adc_to_voltage(data3)
-            return(a2d_count)
+            self.unpack_input(voltage__bytes)
+            print(str(self.slot_data_in))
+            data = self.slot_data_in[slot_num-1]
+            vals = self.split_bytes(data)
+            voltage = self.adc_to_voltage(vals[0])
+            return(voltage)
+            # return(vals[0]) # raw A2D
         except IndexError as e:
             print(e)
             print("EtherCAT Device Not Online!")
             
-    def read_pdo_pwm(self):
+    def read_pdo_pwm(self,slot_num):
          # Read Input PDO, return only data 3 (digital in or pwm in value)
         self.master.send_processdata()
         self.master.receive_processdata(2000)
         try:
-            voltage__bytes = self.master.slaves[0].input                       
-            unpacked_data = struct.unpack('llHHH', voltage__bytes)
-            # Now, unpacked_data contains the values as a tuple.
-            data1 = unpacked_data[0]
-            data2 = unpacked_data[1]
-            data3 = unpacked_data[2]
-            data4 = unpacked_data[3]
-            data5 = unpacked_data[4]
-            # data6 = unpacked_data[5]
-            # data7 = unpacked_data[6]
-            duty = data3
-            freq = data4            
+            bytes = self.master.slaves[0].input
+            self.unpack_input(bytes)
+            data = self.slot_data_in[slot_num-1]
+            vals = self.split_bytes(data)
+            duty = vals[0]
+            freq = vals[1]           
             
             # Round any frequency spikes to the anticipated values
             if 935 < freq < 1050:
@@ -170,27 +179,6 @@ class etherCAT:
                 freq = 100
                 
             return duty,freq
-        except IndexError as e:
-            print(e)
-            print("EtherCAT Device Not Online!")
-        
-    def read_pdo_dig(self):
-        # Read Input PDO, return only data 3 (digital in or pwm in value)
-        self.master.send_processdata()
-        self.master.receive_processdata(2000)
-        try:
-            voltage__bytes = self.master.slaves[0].input                       
-            unpacked_data = struct.unpack('llHHH', voltage__bytes)
-            # Now, unpacked_data contains the values as a tuple.
-            data1 = unpacked_data[0]
-            data2 = unpacked_data[1]
-            data3 = unpacked_data[2]
-            data4 = unpacked_data[3]
-            data5 = unpacked_data[4]
-            # data6 = unpacked_data[5]
-            # data7 = unpacked_data[6]
-            
-            return(data3)
         except IndexError as e:
             print(e)
             print("EtherCAT Device Not Online!")
@@ -237,6 +225,6 @@ class etherCAT:
         self.update_pdo(5,slot_num,board_num,1,1,1,1,type)
         
     def split_bytes(self,long):
-        data1 = ((long >> 16) & 0xFF00) | ((long >> 16) & 0xFF)
-        data2 = ((long) & 0xFF00) | (long & 0xFF)
+        data1 = (long >> 16) & 0xFFFF
+        data2 = long & 0xFFFF
         return data1, data2

@@ -589,3 +589,43 @@ class generate_ui:
         reconnect_label.grid(row=2,column=1)
         reconnect_button.grid(row=2,column=8)
         
+        default_label = tk.Label(
+            label_frame_setting,
+            text="Reset slots to default types: ",
+            bg="azure3",
+            width=30,
+        )
+        default_button = tk.Button(
+                label_frame_setting,
+                height=1,
+                width=11,
+                bd=8,
+                fg="white",
+                font=("Geneva", 6),
+                text="Reset",
+                bg="Steel Blue",
+                command = partial(self._ec.set_types)
+        )
+        default_label.grid(row=3,column=1)
+        default_button.grid(row=3,column=8)
+        
+        pause_label = tk.Label(
+            label_frame_setting,
+            text="Pause SPI/PDO data on S3: ",
+            bg="azure3",
+            width=30,
+        )
+        pause_button = tk.Button(
+                label_frame_setting,
+                height=1,
+                width=11,
+                bd=8,
+                fg="white",
+                font=("Geneva", 6),
+                text="Pause",
+                bg="Steel Blue",
+                command = partial(self._ec.pause_pdo)
+        )
+        pause_label.grid(row=4,column=1)
+        pause_button.grid(row=4,column=8)
+        
