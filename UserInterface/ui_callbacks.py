@@ -38,10 +38,12 @@ class ui_callbacks:
     
         if(self._uc.dig_op_button[i].cget("background")=="green"):
             # Set to LOW
-            self._ec.update_pdo(5,slot_num,board_num,0,0,0,0,1)
+            self._ec.update_pdo(5,slot_num,board_num,0,0,0,slot_num,1)
+            self._ec.update_pdo(9,slot_num,board_num,0,0,0,0,slot_num)
             self._uc.dig_op_button[i].config(background = "red")
         else:
-            self._ec.update_pdo(5,slot_num,board_num,1,1,0,0,1)
+            self._ec.update_pdo(5,slot_num,board_num,1,1,0,slot_num,1)
+            self._ec.update_pdo(9,slot_num,board_num,0,0,0,0,slot_num)
             self._uc.dig_op_button[i].config(background = "green")
         print("DIGOUT "+str(sp))
         
@@ -52,6 +54,7 @@ class ui_callbacks:
         
         # Make sure the board is analog in
         self._ec.update_pdo(5,slot_num,board_num,0,0,0,0,3)
+        self._ec.update_pdo(9,slot_num,board_num,0,0,0,0,slot_num)
         volt_in = self._ec.read_pdo_voltage(slot_num)
         
         # Update the text box with input voltage
@@ -72,6 +75,7 @@ class ui_callbacks:
         
         # Make sure board is analog out
         self._ec.update_pdo(5,slot_num,board_num,data1,data2,0,1,4)     # data 4 =1 to enable tracking output
+        self._ec.update_pdo(9,slot_num,board_num,data1,data2,0,0,slot_num)
         
         print("VoltOUT "+str(sp))
         
@@ -85,6 +89,7 @@ class ui_callbacks:
         data2 = (threshold & 0xFF)
         
         self._ec.update_pdo(5,slot_num,board_num,data1,data2,0,0,5)
+        self._ec.update_pdo(9,slot_num,board_num,data1,data2,0,0,slot_num)
         time.sleep(0.5)
         duty,freq = self._ec.read_pdo_pwm(slot_num)
         
@@ -116,7 +121,8 @@ class ui_callbacks:
         print(freq)
         print(duty)
         
-        self._ec.update_pdo(5,slot_num,board_num,data1,data2,data3,data4,6)
+        self._ec.update_pdo(5,slot_num,board_num,0,0,0,slot_num,6)  # Can't send all data with command 5, only set slotnum/type
+        self._ec.update_pdo(9,slot_num,board_num,data1,data2,data3,data4,slot_num)
     
         print("FREQOUT "+str(sp))
         
@@ -144,7 +150,6 @@ class ui_callbacks:
             self._ec.master.slaves[board-1].output = self._ec.pack_output()
             self._ec.master.send_processdata()
             self._ec.master.receive_processdata(5000)
-            # Reset PDO?????? ...YES otherwise it will keep doing a short....
             time.sleep(0.5)
             self._ec.slot_command[channel-1] = 0
             self._ec.master.slaves[board-1].output = self._ec.pack_output()

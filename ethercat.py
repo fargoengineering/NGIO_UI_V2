@@ -46,23 +46,29 @@ class etherCAT:
             slot = self.gd.channel_dict[spn]
             self.slot_command[slot-1] = 5
             if self.gd.type_dict[spn] == 'digin':
-                self.update_pdo(5,slot,board_num,1,1,1,1,2)
-                # self.slot_aux[slot-1] = 2
+                self.update_pdo(5,slot,board_num,1,1,1,slot,2)
+                time.sleep(.1)
+                self.update_pdo(9,slot,board_num,1,1,1,1,slot)
             elif self.gd.type_dict[spn] == 'digout':
-                self.update_pdo(5,slot,board_num,1,1,1,1,1)
-                # self.slot_aux[slot-1] = 1
+                self.update_pdo(5,slot,board_num,1,1,1,slot,1)
+                time.sleep(.1)
+                self.update_pdo(9,slot,board_num,1,1,1,1,slot)
             elif self.gd.type_dict[spn] == 'voltin':
-                self.update_pdo(5,slot,board_num,1,1,1,1,3)
-                # self.slot_aux[slot-1] = 3
+                self.update_pdo(5,slot,board_num,1,1,1,slot,3)
+                time.sleep(.1)
+                self.update_pdo(9,slot,board_num,1,1,1,1,slot)
             elif self.gd.type_dict[spn] == 'voltout':
-                self.update_pdo(5,slot,board_num,1,1,1,1,4)
-                # self.slot_aux[slot-1] = 4
+                self.update_pdo(5,slot,board_num,1,1,1,slot,4)
+                time.sleep(.1)
+                self.update_pdo(9,slot,board_num,1,1,1,1,slot)
             elif self.gd.type_dict[spn] == 'pwmin':
-                self.update_pdo(5,slot,board_num,1,1,1,1,5)
-                # self.slot_aux[slot-1] = 5
+                self.update_pdo(5,slot,board_num,1,1,1,slot,5)
+                time.sleep(.1)
+                self.update_pdo(9,slot,board_num,1,1,1,1,slot)
             elif self.gd.type_dict[spn] == 'freqout':
-                self.update_pdo(5,slot,board_num,1,1,1,1,6)
-                # self.slot_aux[slot-1] = 6
+                self.update_pdo(5,slot,board_num,1,1,1,slot,6)
+                time.sleep(.1)
+                self.update_pdo(9,slot,board_num,1,1,1,1,slot)
                          
             
     def pack_output(self):
