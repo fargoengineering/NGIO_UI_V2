@@ -9,10 +9,30 @@ class ui_callbacks:
     global _uc, _ec
 
     def __init__(self,ob1,ec):
+        """
+        Initializes an instance of the 'ui_callbacks' class.
+
+        Parameters:
+        - ob1: An object representing the global variables for UI callbacks.
+        - ec: An object representing the 'etherCAT' class for EtherCAT communication.
+        """
         self._uc = ob1  # add dictionary to glcc
         self._ec = ec
         
     def dig_in_uc(self, i):
+        """
+        Handles digital input functionality for the UI.
+
+        Parameters:
+        - i (int): Index corresponding to the digital input in UI elements.
+
+        Note:
+        - Reads the digital input Signal Pin Number (SPN) and retrieves associated board and slot numbers.
+        - Retrieves the threshold value from the corresponding UI entry field.
+        - Prints the threshold and input values for debugging purposes.
+        - Calls the 'read_pdo_voltage' method from the 'etherCAT' class to read the voltage from the specified slot.
+        - Compares the input voltage with the threshold and updates the UI button color accordingly.
+        """
         sp = self._uc.dig_ip_spn[i]
         board_num = int(self._uc.board_dict[sp])
         slot_num = int(self._uc.channel_dict[sp])        
@@ -32,6 +52,18 @@ class ui_callbacks:
         print("DigIN "+str(sp))
 
     def dig_out_uc(self, i):        
+        """
+        Handles digital output functionality for the UI.
+
+        Parameters:
+        - i (int): Index corresponding to the digital output in UI elements.
+
+        Note:
+        - Reads the digital output Signal Pin Number (SPN) and retrieves associated board and slot numbers.
+        - Checks the background color of the UI button to determine the current state (LOW or HIGH).
+        - Calls the 'update_pdo' method from the 'etherCAT' class to update the PDO arrays based on the button state.
+        - Updates the UI button color accordingly.
+        """        
         sp = self._uc.dig_op_spn[i]
         board_num = int(self._uc.board_dict[sp])
         slot_num = int(self._uc.channel_dict[sp])
@@ -48,6 +80,18 @@ class ui_callbacks:
         print("DIGOUT "+str(sp))
         
     def volt_in_uc(self, i):
+        """
+        Handles voltage input functionality for the UI.
+
+        Parameters:
+        - i (int): Index corresponding to the voltage input in UI elements.
+
+        Note:
+        - Reads the voltage input Signal Pin Number (SPN) and retrieves associated board and slot numbers.
+        - Ensures that the board is set to analog input by calling 'update_pdo' method from the 'etherCAT' class.
+        - Calls the 'read_pdo_voltage' method from the 'etherCAT' class to read the voltage from the specified slot.
+        - Updates the text box in the UI with the input voltage value.
+        """
         sp = self._uc.vol_ip_spn[i]
         board_num = int(self._uc.board_dict[sp])
         slot_num = int(self._uc.channel_dict[sp])
@@ -64,6 +108,18 @@ class ui_callbacks:
         print("VoltIN "+str(sp))
 
     def volt_out_uc(self, i):
+        """
+        Handles voltage output functionality for UI callbacks.
+
+        Parameters:
+        - i (int): Index corresponding to the voltage output in UI elements.
+
+        Note:
+        - Reads the voltage output Signal Pin Number (SPN) and retrieves associated board and slot numbers.
+        - Retrieves the voltage output value from the corresponding UI label.
+        - Splits the voltage output value into two 8-bit data values.
+        - Ensures that the board is set to analog output by calling 'update_pdo' method from the 'etherCAT' class.
+        """
         sp = self._uc.vol_op_spn[i]
         board_num = int(self._uc.board_dict[sp])
         slot_num = int(self._uc.channel_dict[sp])
@@ -80,6 +136,19 @@ class ui_callbacks:
         print("VoltOUT "+str(sp))
         
     def pwm_in_uc(self, i):
+        """
+        Handles PWM input functionality for the UI.
+
+        Parameters:
+        - i (int): Index corresponding to the PWM input in UI elements.
+
+        Note:
+        - Reads the PWM input Signal Pin Number (SPN) and retrieves associated board and slot numbers.
+        - Retrieves the PWM threshold value from the corresponding UI label and splits it into two 8-bit data values.
+        - Ensures that the board is set to PWM input by calling 'update_pdo' method from the 'etherCAT' class.
+        - Calls the 'read_pdo_pwm' method from the 'etherCAT' class to read duty cycle and frequency.
+        - Updates the UI labels with the read duty cycle and frequency values.
+        """
         sp = self._uc.pwm_ip_spn[i]
         board_num = int(self._uc.board_dict[sp])
         slot_num = int(self._uc.channel_dict[sp])
@@ -104,6 +173,19 @@ class ui_callbacks:
         print("PWMIN "+str(sp))
         
     def freq_out_uc(self, i):
+        """
+        Handles frequency output functionality for UI callbacks.
+
+        Parameters:
+        - i (int): Index corresponding to the frequency output in UI elements.
+
+        Note:
+        - Reads the frequency output Signal Pin Number (SPN) and retrieves associated board and slot numbers.
+        - Retrieves the frequency and duty cycle percentage values from the corresponding UI labels.
+        - Converts the duty cycle percentage to a 16-bit duty cycle value.
+        - Splits the frequency and duty cycle values into four 8-bit data values.
+        - Calls the 'update_pdo' method from the 'etherCAT' class to update the PDO arrays based on the input values.
+        """
         sp = self._uc.fq_op_spn[i]
         board_num = int(self._uc.board_dict[sp])
         slot_num = int(self._uc.channel_dict[sp])
@@ -127,6 +209,20 @@ class ui_callbacks:
         print("FREQOUT "+str(sp))
         
     def set_input_relay(self,board,slot,state):
+        """
+        Sets the input relay state for a specified board and slot.
+
+        Parameters:
+        - board (int): The board number.
+        - slot (int): The slot number.
+        - state (int): The desired state of the relay (0 or 1).
+
+        Note:
+        - Sets the relay command and state in the EtherCAT PDO arrays.
+        - Attempts to update the EtherCAT master's output with the modified PDO arrays.
+        - Resets the PDO to avoid toggling the relay for shorting after a short delay.
+        - Prints a message if the specified board is not detected.
+        """
         self._ec.slot_command[slot-1] = 7        # set relay command
         self._ec.slot_aux[slot-1] = state        
         try:
@@ -143,6 +239,21 @@ class ui_callbacks:
             print(f"Board #{board} not detected!")
             
     def set_output_relay(self,relay_board,board,channel,state):
+        """
+        Sets the output relay state for a specified board, channel, and relay board.
+
+        Parameters:
+        - relay_board (int): The relay board number.
+        - board (int): The board number.
+        - channel (int): The channel number.
+        - state (int): The desired state of the relay (0 or 1).
+
+        Note:
+        - Sets the CAN command, relay board number, and state in the EtherCAT PDO arrays.
+        - Attempts to update the EtherCAT master's output with the modified PDO arrays.
+        - Resets the PDO to avoid toggling the relay for shorting after a short delay.
+        - Prints a message if the specified board is not detected.
+        """
         self._ec.slot_command[channel-1] = 13   # send CAN command
         self._ec.slot_data[channel-1] = relay_board               # RELAY BOARD NUMBER, NOT NGIO BOARD NUMBER
         self._ec.slot_aux[channel-1] = state        
@@ -160,6 +271,20 @@ class ui_callbacks:
             
             
     def relay_send(self,spn,selected_val):                
+        """
+        Sends relay commands based on the selected value for a specified SPN.
+
+        Parameters:
+        - spn (str): The Signal Pin Number (SPN).
+        - selected_val (str): The selected value indicating the relay state.
+
+        Note:
+        - Retrieves board and slot numbers, relay type, and other relevant information from UI dictionaries.
+        - Maps the selected value to the corresponding relay state.
+        - Calls either 'set_input_relay' or 'set_output_relay' based on the relay type and sends the command.
+        - Adds a delay to ensure the relay commands are processed.
+        - Pauses UI for 6 seconds to allow relay function to complete.
+        """
         board_num = int(self._uc.board_dict[spn])                   # Board_Num : Column F
         slot_num = int(self._uc.channel_dict[spn])                  # Channel   : Column E
         relay_type = str(self._uc.relay_type_dict[spn])             # IO_type   : Column J
