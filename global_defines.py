@@ -135,16 +135,16 @@ class global_defines:
 
     # Non-UI Variables:
 
-    eng_spd = tk.StringVar()
-    chopper_type = 1
-    chopper_type_var = tk.StringVar()
-    dig_ip_option_var = []
-    open_option_var = []
-    HHMC_gear = tk.StringVar()
-    IC_gear = tk.StringVar()
-    Aux_PTO_enabled_str = tk.StringVar()
-    feeder_type = tk.StringVar()
-    unload_rate = tk.StringVar()
+    # eng_spd = tk.StringVar()
+    # chopper_type = 1
+    # chopper_type_var = tk.StringVar()
+    # dig_ip_option_var = []
+    # open_option_var = []
+    # HHMC_gear = tk.StringVar()
+    # IC_gear = tk.StringVar()
+    # Aux_PTO_enabled_str = tk.StringVar()
+    # feeder_type = tk.StringVar()
+    # unload_rate = tk.StringVar()
 
     # general spn/widgets
     dropdown_relay_options = ["OpenCircuit","BatteryShort","GroundShort","Bypass"]

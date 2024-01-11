@@ -135,23 +135,23 @@ class ui_callbacks:
             self._ec.master.receive_processdata(5000)
             # Reset PDO so we don't keep toggling the relay for shorting..
             time.sleep(0.5)
-            self._ec.slot_command[slot-1] = 0
+            self._ec.slot_command[slot-1] = 9
             self._ec.master.slaves[board-1].output = self._ec.pack_output()
             self._ec.master.send_processdata()
             self._ec.master.receive_processdata(5000)
         except:
             print(f"Board #{board} not detected!")
             
-    def set_output_relay(self,board,channel,state):
+    def set_output_relay(self,relay_board,board,channel,state):
         self._ec.slot_command[channel-1] = 13   # send CAN command
-        self._ec.slot_data[channel-1] = board               # RELAY BOARD NUMBER, NOT NGIO BOARD NUMBER
+        self._ec.slot_data[channel-1] = relay_board               # RELAY BOARD NUMBER, NOT NGIO BOARD NUMBER
         self._ec.slot_aux[channel-1] = state        
         try:
             self._ec.master.slaves[board-1].output = self._ec.pack_output()
             self._ec.master.send_processdata()
             self._ec.master.receive_processdata(5000)
             time.sleep(0.5)
-            self._ec.slot_command[channel-1] = 0
+            self._ec.slot_command[channel-1] = 9
             self._ec.master.slaves[board-1].output = self._ec.pack_output()
             self._ec.master.send_processdata()
             self._ec.master.receive_processdata(5000)
@@ -166,21 +166,30 @@ class ui_callbacks:
         
         if relay_type == "IN":
             io_type = 1
+            if selected_val == "OpenCircuit":
+                state = 1
+            elif selected_val == "BatteryShort":
+                state = 2
+            elif selected_val == "GroundShort":
+                state = 3
+            elif selected_val == "Bypass":
+                state = 4          
         elif relay_type == "OUT":
             io_type = 0 
             relay_board = int(self._uc.relay_board_dict[spn])       # CANChannel : Column I
             relay_channel = int(self._uc.relay_channel_dict[spn])   # CANBoardNum : Column H
-            
-        if selected_val == "OpenCircuit":
-            state = 1
-        elif selected_val == "BatteryShort":
-            state = 2
-        elif selected_val == "GroundShort":
-            state = 3
-        elif selected_val == "Bypass":
-            state = 4          
+            if selected_val == "OpenCircuit":
+                state = 1
+            elif selected_val == "BatteryShort":
+                state = 3
+            elif selected_val == "GroundShort":
+                state = 2
+            elif selected_val == "Bypass":
+                state = 0          
                         
         if (io_type == 1):
             self.set_input_relay(board_num,slot_num,state)
         elif (io_type == 0):
-            self.set_output_relay(relay_board,relay_channel,state)        
+            self.set_output_relay(relay_board,board_num,relay_channel,state)        
+        
+        time.sleep(6)
