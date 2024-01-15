@@ -1,3 +1,6 @@
 pysoem
 pandas
 openpyxl
+setuptools
+requests
+numpy

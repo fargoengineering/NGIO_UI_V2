@@ -609,23 +609,3 @@ class generate_ui:
         default_label.grid(row=3,column=1)
         default_button.grid(row=3,column=8)
         
-        pause_label = tk.Label(
-            label_frame_setting,
-            text="Pause SPI/PDO data on S3: ",
-            bg="azure3",
-            width=30,
-        )
-        pause_button = tk.Button(
-                label_frame_setting,
-                height=1,
-                width=11,
-                bd=8,
-                fg="white",
-                font=("Geneva", 6),
-                text="Pause",
-                bg="Steel Blue",
-                command = partial(self._ec.pause_pdo)
-        )
-        pause_label.grid(row=4,column=1)
-        pause_button.grid(row=4,column=8)
-        

@@ -157,6 +157,8 @@ make.bat
 Makefile
 conf.py
 index.rst
+source/
+build/
 
 
 # PyCharm
