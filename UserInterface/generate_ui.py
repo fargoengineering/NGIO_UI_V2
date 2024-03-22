@@ -492,7 +492,85 @@ class generate_ui:
             self._ge.freq_label_duty[i].insert(0, "0")
             self._ge.freq_label_freq[i].insert(0, "0")
       
+        # Potentiometer Tab
+        for i in range(len(self._ge.pot_spn)):  # length = 58
+            self._ge.pot_label.append(0)
+            self._ge.pot_button.append(0)
+            self._ge.pot_toggle.append(0)
+            self._ge.pot_option.append(0)
+            self._ge.relay_switch.append(1)
+            self._ge.pot_string.append(tk.StringVar())
+            
+            label = tk.Label(
+                self._ge.pot_frame,
+                text=self._ge.pot_name[i],
+                bg="azure3",
+                width=30,
+            )
+            header = tk.Label(
+                self._ge.pot_frame,
+                text=" ",
+                bg="azure3",
+                width=30,
+            )
+            out_label = tk.Label(
+                self._ge.pot_frame,
+                text="VoltageOut: ",
+                bg="azure3",
+                width=15,
+            )
+            self._ge.pot_label[i] = tk.Entry(
+                self._ge.pot_frame,
+                bd=2,
+                validate="key",
+                width=6,
+                font=("courier", 10),
+                textvariable=self._ge.pot_string[i],
+            )
+            self._ge.pot_button[i] = tk.Button(
+                self._ge.pot_frame,
+                height=1,
+                width=11,
+                bd=8,
+                fg="white",
+                font=("Geneva", 6),
+                text="Update",
+                bg="Steel Blue",
+                command=partial(self.ui_call.pot_uc, i),
+            )
+            self._ge.pot_toggle[i] = tk.Button(
+                self._ge.pot_frame,
+                height=1,
+                width=4,
+                bd=6,
+                fg="black",
+                font=("Geneva", 6),
+                bg="Red",
+                command=partial(self.ui_call.pot_uc, i),
+            )
+            self._ge.pot_option[i] = tk.OptionMenu(
+                self._ge.pot_frame,
+                tk.StringVar(self._ge.pot_frame),
+                *self._ge.dropdown_relay_options,
+                command=partial(self.ui_call.relay_send, self._ge.pot_spn[i])
+            )
 
+            if i < 29:
+                header.grid(row=0,column=0)
+                label.grid(row=i+1, column=0)
+                out_label.grid(row=0,column=1)
+                self._ge.pot_label[i].grid(row=i+1, column=1)
+                self._ge.pot_button[i].grid(row=i+1, column=2)
+                if self._ge.relay_bool_dict.get(self._ge.vol_op_spn[i]):
+                    self._ge.pot_option[i].grid(row=i+1,column=3)
+            else:
+                label.grid(row=i - 28, column=3)
+                self._ge.pot_label[i].grid(row=i - 28, column=4)
+                self._ge.pot_button[i].grid(row=i - 28, column=5)
+                if self._ge.relay_bool_dict.get(self._ge.pot_spn[i]):
+                    self._ge.pot_option[i].grid(row=i - 28,column=6)
+
+            self._ge.pot_label[i].insert(0, "0")
     # Settings Tab
     def generate_setting_ui(self):
         

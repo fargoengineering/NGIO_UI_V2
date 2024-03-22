@@ -208,6 +208,28 @@ class ui_callbacks:
     
         print("FREQOUT "+str(sp))
         
+    def pot_uc(self, i):
+        """
+        Handles potentiometer functionality for UI callbacks.
+
+        Parameters:
+        - i (int): Index corresponding to the voltage output in UI elements.
+        """
+        sp = self._uc.pot_spn[i]
+        board_num = int(self._uc.board_dict[sp])
+        slot_num = int(self._uc.channel_dict[sp])
+        
+        pot_out = int(self._uc.pot_label[i].get())
+        
+        # data1 = (pot_out >> 8) & 0xFF
+        # data2 = pot_out & 0xFF
+        
+        # Make sure board is potentiometer
+        self._ec.update_pdo(5,slot_num,board_num,pot_out,pot_out,pot_out,pot_out,7)
+        self._ec.update_pdo(9,slot_num,board_num,pot_out,pot_out,pot_out,pot_out,slot_num)
+        
+        print("Potentiometer "+str(sp))
+        
     def set_input_relay(self,board,slot,state):
         """
         Sets the input relay state for a specified board and slot.

@@ -66,6 +66,7 @@ class parse_excel:
                     or (self._pe.vol_op_str in spn_type)
                     or (self._pe.pwm_ip_str in spn_type)
                     or (self._pe.fq_op_str in spn_type)
+                    or (self._pe.pot_str in spn_type)
                 ):
                     # required data
                     name = self.df.loc[i, "Name"]
@@ -105,5 +106,10 @@ class parse_excel:
                         self._pe.fq_op_spn.append(spn)
                         self._pe.fq_op_name.append(new_name)
                         self._pe.type_dict.update({spn: "freqout"})
+                        
+                    elif self._pe.pot_str in spn_type:
+                        self._pe.pot_spn.append(spn)
+                        self._pe.pot_name.append(new_name)
+                        self._pe.type_dict.update({spn:"pot"})
             except KeyError as e:
                 print(e)

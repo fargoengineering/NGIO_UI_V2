@@ -97,7 +97,10 @@ class etherCAT:
                 self.update_pdo(5,slot,board_num,1,1,1,slot,6)
                 time.sleep(.01)
                 self.update_pdo(9,slot,board_num,1,1,1,1,slot)
-                         
+            elif self.gd.type_dict[spn] == 'pot':
+                self.update_pdo(5,slot,board_num,1,1,1,slot,7)
+                time.sleep(.01)
+                self.update_pdo(9,slot,board_num,1,1,1,1,slot)
             
     def pack_output(self):
         """

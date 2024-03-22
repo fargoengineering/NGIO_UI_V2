@@ -110,6 +110,18 @@ class global_defines:
     freq_op_canvas.pack(side=LEFT, expand=True, fill=BOTH)
     freq_op_frame = Frame(freq_op_canvas)
     freq_op_canvas.create_window((0, 0), window=freq_op_frame, anchor="nw")
+    
+    
+    # Potentiometer
+    tc_pot = ttk.Frame(tc)
+    tc_pot.pack(side="left")
+    pot_canvas = Canvas(
+        tc_pot, width=6, height=6, scrollregion=(0, 0, 1450, 1100)
+    )
+    pot_canvas.config(width=6, height=6)
+    pot_canvas.pack(side=LEFT, expand=True, fill=BOTH)
+    pot_frame = Frame(pot_canvas)
+    pot_canvas.create_window((0, 0), window=pot_frame, anchor="nw")
 
     # Settings
     tc_settings = ttk.Frame(tc)
@@ -129,22 +141,10 @@ class global_defines:
     tc.add(tc_vol_op, text="AnalogOut")
     tc.add(tc_pwm_ip, text="PWMIn")
     tc.add(tc_freq_op, text="FreqOut")
+    tc.add(tc_pot, text="Potentiometer")
     tc.add(tc_settings, text="Settings")
 
     tc.pack(expand=1, fill="both")
-
-    # Non-UI Variables:
-
-    # eng_spd = tk.StringVar()
-    # chopper_type = 1
-    # chopper_type_var = tk.StringVar()
-    # dig_ip_option_var = []
-    # open_option_var = []
-    # HHMC_gear = tk.StringVar()
-    # IC_gear = tk.StringVar()
-    # Aux_PTO_enabled_str = tk.StringVar()
-    # feeder_type = tk.StringVar()
-    # unload_rate = tk.StringVar()
 
     # general spn/widgets
     dropdown_relay_options = ["OpenCircuit","BatteryShort","GroundShort","Bypass"]
@@ -164,6 +164,11 @@ class global_defines:
     volt_op_option = []
     pwm_ip_option = []
     freq_op_option = []
+    
+    pot_button = []
+    pot_toggle = []
+    pot_label = []
+    pot_option = []
     
     pwm_ip_label_freq = []
     pwm_ip_label_duty = []
@@ -208,6 +213,8 @@ class global_defines:
             freq_toggle,
             button_pulse,
             pulse_toggle,
+            pot_button,
+            pot_toggle,
         )
     )
 
@@ -218,6 +225,7 @@ class global_defines:
     vol_op_str = "AnalogOutput"
     pwm_ip_str = "PWMInput"
     fq_op_str = "FrequencyOutput"
+    pot_str = "Potentiometer"
 
     # Lists for Channel/Board
     ping_dict = {}  # Dictionary with Board Number : Boolean active value
@@ -256,6 +264,9 @@ class global_defines:
     pwm_ip_spn = []
     fq_op_spn = []
     pulse_spn = []
+    pot_spn = []        # Potentiometer slot spn
+    
+    
     dig_ip_name = []
     dig_op_name = []
     vol_ip_name = []
@@ -264,6 +275,7 @@ class global_defines:
     pwm_ip_name = []
     fq_op_name = []
     pulse_name = []
+    pot_name = []       # Potentiometer slot name
     spare_list_1 = []
     spare_list_2 = []
     volt_op_string = []
@@ -271,6 +283,7 @@ class global_defines:
     pwm_ip_string = []
     freq_string = []
     pulse_string = []
+    pot_string = []
     type_dict = {}
 
 
