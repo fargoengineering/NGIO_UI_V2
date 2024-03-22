@@ -36,7 +36,7 @@ class etherCAT:
         """
         self.master = pysoem.Master()
         # self.ec_adapter_name = "eth0"      # linux format 
-        self.ec_adapter_name = "\\Device\\NPF_{2AFC35B5-1EE7-49B9-927D-D2CE5EDC52DD}"    # Windows Format
+        self.ec_adapter_name = "\\Device\\NPF_{EA8715FA-3EDA-44ED-ACDD-CD45A7D2C462}"   # Windows Format
         SlaveSet = collections.namedtuple('SlaveSet', 'slave_name product_code config_func')
         self._expected_slave_mapping = {0: SlaveSet('FEI_SLAVE', self.PRODUCT_CODE, None)}        
         
@@ -162,9 +162,7 @@ class etherCAT:
         - The 'ec_adapter_name' attribute should be set with the appropriate Ethernet adapter name based on the platform.
         - The 'pysoem' module is assumed to be imported and used for EtherCAT communication.
         """
-        
-        if len(self.master.slaves) > 0:
-            self.close_ec()
+
             
         self.master.open(self.ec_adapter_name)   # make sure matching correct platform
         
@@ -223,7 +221,8 @@ class etherCAT:
         try:
             self.master.slaves[board_number-1].output = self.pack_output()
         except:
-            print(f"Board #{board_number} not found!")
+            # print(f"Board #{board_number} not found!")
+            pass
         self.master.send_processdata()   
         self.master.receive_processdata(5000)     
         time.sleep(0.05) 

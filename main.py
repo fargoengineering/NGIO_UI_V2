@@ -17,24 +17,6 @@ gu.generate_spn_ui()
 gu.generate_setting_ui()
 ec.run_ec()
 
-# update_ui.py
-def ui_update_thread():
-    th1 = threading.Timer(0.01, ui_update_thread)
-    th1.daemon = True
-    th1.start()     
-    
-
-def default_thread():
-    ec.set_types()  # Assuming this returns or yields control
-    threading.Timer(10, default_thread).start()  # Reschedule after 2 seconds
-    # time.sleep(10)
-
-# Start the thread as a daemon:
-# th = threading.Thread(target=default_thread)
-# th.daemon = True
-# th.start()
-
-
 # Set defaults once and pause:
 ec.set_types()
 # ec.pause_pdo()

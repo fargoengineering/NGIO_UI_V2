@@ -317,4 +317,4 @@ class ui_callbacks:
         elif (io_type == 0):
             self.set_output_relay(relay_board,board_num,relay_channel,state)        
         
-        time.sleep(6)
+        # time.sleep(6)
