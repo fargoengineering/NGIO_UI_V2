@@ -36,7 +36,7 @@ class etherCAT:
         """
         self.master = pysoem.Master()
         # self.ec_adapter_name = "eth0"      # linux format 
-        self.ec_adapter_name = "\\Device\\NPF_{EA8715FA-3EDA-44ED-ACDD-CD45A7D2C462}"   # Windows Format
+        self.ec_adapter_name = "\\Device\\NPF_{B81BF524-ECA5-4877-8D9C-40143A2C5892}"   # Windows Format
         SlaveSet = collections.namedtuple('SlaveSet', 'slave_name product_code config_func')
         self._expected_slave_mapping = {0: SlaveSet('FEI_SLAVE', self.PRODUCT_CODE, None)}        
         

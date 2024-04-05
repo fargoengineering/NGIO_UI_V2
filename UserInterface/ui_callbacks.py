@@ -221,12 +221,14 @@ class ui_callbacks:
         
         pot_out = int(self._uc.pot_label[i].get())
         
-        # data1 = (pot_out >> 8) & 0xFF
-        # data2 = pot_out & 0xFF
+        # Shift the pot value
+        data1 = (pot_out >> 4) & 0x0F
+        data2 = pot_out & 0x0F
         
         # Make sure board is potentiometer
-        self._ec.update_pdo(5,slot_num,board_num,pot_out,pot_out,pot_out,pot_out,7)
-        self._ec.update_pdo(9,slot_num,board_num,pot_out,pot_out,pot_out,pot_out,slot_num)
+        # SEND DATA 1 and DATA2!
+        self._ec.update_pdo(5,slot_num,board_num,data1,data2,pot_out,pot_out,7)
+        self._ec.update_pdo(9,slot_num,board_num,data1,data2,pot_out,pot_out,slot_num)
         
         print("Potentiometer "+str(sp))
         
