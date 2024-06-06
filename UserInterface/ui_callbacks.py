@@ -75,7 +75,7 @@ class ui_callbacks:
             self._uc.dig_op_button[i].config(background = "red")
         else:
             self._ec.update_pdo(5,slot_num,board_num,1,1,0,slot_num,1)
-            self._ec.update_pdo(9,slot_num,board_num,0,0,0,0,slot_num)
+            self._ec.update_pdo(9,slot_num,board_num,1,1,1,1,slot_num)
             self._uc.dig_op_button[i].config(background = "green")
         print("DIGOUT "+str(sp))
         
@@ -98,7 +98,7 @@ class ui_callbacks:
         
         # Make sure the board is analog in
         self._ec.update_pdo(5,slot_num,board_num,0,0,0,0,3)
-        self._ec.update_pdo(9,slot_num,board_num,0,0,0,0,slot_num)
+        # self._ec.update_pdo(9,slot_num,board_num,0,0,0,0,slot_num)
         volt_in = self._ec.read_pdo_voltage(slot_num)
         
         # Update the text box with input voltage
@@ -128,10 +128,12 @@ class ui_callbacks:
         
         data1 = (volt_out >> 8) & 0xFF
         data2 = volt_out & 0xFF
+        print(f"data1: {data1}")
+        print(f"data2: {data2}")
         
         # Make sure board is analog out
         self._ec.update_pdo(5,slot_num,board_num,data1,data2,0,1,4)     # data 4 =1 to enable tracking output
-        self._ec.update_pdo(9,slot_num,board_num,data1,data2,0,0,slot_num)
+        self._ec.update_pdo(9,slot_num,board_num,data1,data2,data1,data2,slot_num)
         
         print("VoltOUT "+str(sp))
         

@@ -218,7 +218,8 @@ class etherCAT:
         values = [int(byte) for byte in [data1, data2, data3, data4]]
         shifted_vals = [value << (8 * (3 - i)) for i, value in enumerate(values)]
         data_out = sum(shifted_vals)
-
+        if(slot_number == 14):
+            print(f"{slot_number} dataOut: {data_out}")
         self.slot_data[int(slot_number)-1] = data_out
         self.slot_aux[int(slot_number)-1] = data5
         try:
@@ -290,6 +291,8 @@ class etherCAT:
             vals = self.split_bytes(data)
             duty = vals[0]
             freq = vals[1]           
+            for i in range(len(vals)):                
+                print(f"data {i} {vals[i]}")
             
             # Round any frequency spikes to the anticipated values
             if 935 < freq < 1050:
